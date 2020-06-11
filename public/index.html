@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0,minimum-scale=1.0, user-scalable=0" />
+  <title>vue3.0基础框架</title>
+  <meta http-equiv="x-dns-prefetch-control" content="on" />
+  <script type="text/javascript" src="//wechatfe.github.io/vconsole/lib/vconsole.min.js?v=3.3.0"></script>
+</head>
+<script>
+  if(window.location.toString().indexOf('vconsole=1')!==-1){
+    window.vConsole = new window.VConsole();
+  }
+</script>
+<script>
+  !function () {
+    /*
+      # 按照宽高比例设定html字体
+      # 说明：
+         - baseWidth是设计稿尺寸
+         - baseFontSize是750设计稿下html的fontsize
+         - 按照当前屏幕宽高比跟设计稿宽高比较小的值作为缩放比例
+    */
+
+    (function (doc, win) {
+      var docEl = doc.documentElement,
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+        recalc = function () {
+          var clientWidth = docEl.clientWidth;
+          if (!clientWidth) return;
+          //如果页面的宽度超过了640px，那么页面中html的font-size恒为100px，
+          //否则页面中html的font-size的大小为：100*(当前页面宽度/640)
+          if (clientWidth >= 750) {
+            docEl.style.fontSize = '100px';
+          } else {
+            //此时1rem=100px
+            docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+          }
+        };
+
+      if (!doc.addEventListener) return;
+      win.addEventListener(resizeEvt, recalc, false);
+      doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+  }();
+
+</script>
+  <body>
+    <noscript>
+      <strong>We're sorry but this project doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+  </body>
+</html>
