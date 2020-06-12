@@ -7,12 +7,20 @@
       <div class="top-title">
         <div class="name-box">选择成功</div>
       </div>
-      <div class="top-content" v-if="price > 0">¥ {{price}} 请到医自费</div>
-      <div class="top-content">体检时间请根据贵公司要求分批前来</div>
+      <!-- <div class="top-content" v-if="price > 0">¥ {{price}} 请到医自费</div> -->
+      <div class="top-content">等待审核中…</div>
+      <!-- <div class="top-content">体检时间请根据贵公司要求分批前来</div> -->
     </div>
     <!-- 主体部分 -->
     <div class="body-box">
       <div class="content-box big-border">
+        <div class="need-confirm-box" v-if="prompt && prompt.intro">
+          <div class="need-text">{{prompt.intro}}</div>
+          <div class="need-bottom">
+            <img class="org-icon" src="../../assets/images/ic-org-location.png" />
+            <div class="bottom-text">{{prompt.address}}</div>
+          </div>
+        </div>
         <div class="title-box">
           <img class="title-icon" src="../../assets/images/ic-title.png" />
           <div class="title">体检前要做哪些准备？</div>
@@ -72,7 +80,8 @@ export default {
       idRight: true,
       popShow: false,
       hasPrice: true,
-      price: 0
+      price: 0,
+      prompt: ''
     }
   },
   components: {
@@ -91,8 +100,7 @@ export default {
     }
   },
   mounted () {
-    console.log('status:', this.$route.params.price)
-    this.price = this.$route.params.price
+    this.prompt = this.$route.params.prompt
   },
   methods: {
     showPop () {
@@ -181,6 +189,39 @@ export default {
     position: relative;
     .content-box{
       padding: 24px 24px 16px;
+      .need-confirm-box{
+        padding: 15px 16px;
+        box-sizing: border-box;
+        background:rgba(255,249,242,0.5);
+        border-radius:8px;
+        border:1px solid rgba(255,170,60,1);
+        margin-bottom: 24px;
+        .need-text{
+          font-size:14px;
+          font-family:PingFangSC-Semibold;
+          font-weight:600;
+          color:rgba(255,170,60,1);
+          line-height:20px;
+        }
+        .need-bottom{
+          margin-top: 7px;
+          display: flex;
+          align-items: center;
+          .org-icon{
+            width: 12px;
+            height: 12px;
+          }
+          .bottom-text{
+            margin-left: 2px;
+            height:15px;
+            font-size:11px;
+            font-family:PingFangSC-Regular;
+            font-weight:400;
+            color:rgba(255,170,60,1);
+            line-height:16px;
+          }
+        }
+      }
       .title-box{
         display: flex;
         align-items: center;

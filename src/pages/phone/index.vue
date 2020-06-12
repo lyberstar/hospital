@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { GetNewsList } from '@ajax'
+import axios from 'axios'
 export default {
   name: 'Home',
   data () {
@@ -27,15 +27,13 @@ export default {
       idRight: true,
       popShow: false,
       loginPhone: '',
-      idNum: ''
+      idNum: '',
+      idcard: ''
     }
   },
   components: {
   },
   created () {
-    GetNewsList().then(res => {
-      console.log(res)
-    })
   },
   watch: {
     loginPhone (newValue, oldValue) {
@@ -51,18 +49,42 @@ export default {
   },
   computed: {
   },
-  mounted () {},
+  mounted () {
+    console.log('status:', this.$route.params.idNum)
+    this.idcard = this.$route.params.idNum
+  },
   methods: {
     inputChange (e) {
       this.idNum = e.target.value
     },
     turnToMain () {
+      let that = this
       var number = this.idNum.replace(/\s*/g, '')
       if (!(/^1[3456789]\d{9}$/.test(number))) {
         this.$toast('手机号码不正确')
         return false
       } else {
-        this.$router.push({ name: 'code' })
+        axios({
+          method: 'post',
+          baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+          url: 'examined/sendCode',
+          headers: { 'token': localStorage.getItem('JWT_TOKEN') },
+          data: {
+            card: this.idcard,
+            phone: number
+          }
+        }).then(function (res) {
+          console.log(res)
+          if (res.data.data) {
+            that.$router.push({ name: 'code', params: { idCard: that.idcard, phone: number } })
+          }
+        }).catch(function (err) {
+          console.log('请求失败', err)
+        })
+        // UpPhone({ id_card: this.idcard }).then(res => {
+        //   console.log(res)
+        // })
+        // this.$router.push({ name: 'code' })
       }
     }
   }

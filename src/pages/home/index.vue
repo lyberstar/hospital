@@ -36,12 +36,12 @@
 </template>
 
 <script>
-import { GetNewsList } from '@ajax'
+import { UpIdCard } from '@ajax'
 export default {
   name: 'Home',
   data () {
     return {
-      idRight: true,
+      idRight: false,
       popShow: false,
       loginPhone: '',
       idNum: ''
@@ -50,9 +50,9 @@ export default {
   components: {
   },
   created () {
-    GetNewsList().then(res => {
-      console.log(res)
-    })
+    if (localStorage.getItem('LOGIN_TOKEN')) {
+      this.$router.replace({ name: 'login-main' })
+    }
   },
   watch: {
     // loginPhone (newValue, oldValue) {
@@ -74,11 +74,51 @@ export default {
   mounted () {},
   methods: {
     testId () {
-      if (this.idRight) {
-        this.$router.push({ name: 'phone', params: { idcard: this.idNum } })
+      if (this.checkIDCard(this.idNum)) {
+        UpIdCard({ id_card: this.idNum }).then(res => {
+          console.log(res)
+          if (res.data.extend === 400) {
+            this.showPop()
+          } else {
+            localStorage.setItem('JWT_TOKEN', res.data.data.token)
+            this.$router.push({ name: 'phone', params: { idNum: this.idNum } })
+          }
+        })
       } else {
-        this.showPop()
+        this.$toast('格式不正确')
       }
+    },
+    checkIDCard (idcode) {
+      // 加权因子
+      var weightFactor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
+      // 校验码
+      var checkCode = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2']
+
+      var code = idcode + ''
+      var last = idcode[17]// 最后一位
+
+      var seventeen = code.substring(0, 17)
+
+      // ISO 7064:1983.MOD 11-2
+      // 判断最后一位校验码是否正确
+      var arr = seventeen.split('')
+      var len = arr.length
+      var num = 0
+      for (var i = 0; i < len; i++) {
+        num = num + arr[i] * weightFactor[i]
+      }
+
+      // 获取余数
+      var resisue = num % 11
+      var lastNo = checkCode[resisue]
+
+      var idcardPatter = /^[1-9][0-9]{5}([1][9][0-9]{2}|[2][0][0|1][0-9])([0][1-9]|[1][0|1|2])([0][1-9]|[1|2][0-9]|[3][0|1])[0-9]{3}([0-9]|[X])$/
+
+      // 判断格式是否正确
+      var format = idcardPatter.test(idcode)
+
+      // 返回验证结果，校验码和格式同时正确才算是合法的身份证号码
+      return !!(last === lastNo && format)
     },
     showPop () {
       this.popShow = true
@@ -88,9 +128,6 @@ export default {
     },
     inputChange (e) {
       this.idNum = e.target.value
-    },
-    turnToMain (status) {
-      this.$router.push({ name: 'main', params: { status } })
     }
   }
 }

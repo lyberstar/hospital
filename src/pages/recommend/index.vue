@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { GetNewsList } from '@ajax'
+import axios from 'axios'
 export default {
   name: 'Home',
   data () {
@@ -94,9 +94,7 @@ export default {
   components: {
   },
   created () {
-    GetNewsList().then(res => {
-      console.log(res)
-    })
+    this.getDataListw()
   },
   computed: {
     popTitle () {
@@ -110,6 +108,20 @@ export default {
     console.log('status:', this.$route.params.status)
   },
   methods: {
+    getDataListw () {
+      let that = this
+      axios({
+        method: 'get',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        url: 'examined/RecommendedPackages',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {}
+      }).then(function (res) {
+        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊22222:', res)
+      }).catch(function (err) {
+        console.log('请求失败', err)
+      })
+    },
     showPop () {
       this.popShow = true
     },

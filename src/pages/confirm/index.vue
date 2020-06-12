@@ -27,7 +27,7 @@
           <div class="other-box" v-for="(items, idx) in selfList" :key="idx">
             <img class="corner-tag" src="../../assets/images/ic-done-corner.png" />
             <div class="other-title" :class="items.checked ? 'checkedtitle' : 'nocheckedtitle'">{{items.name}}</div>
-            <div class="other-subtitle" :class="items.checked ? 'checkedsub' : 'nocheckedsub'">{{items.subName}}</div>
+            <div class="other-subtitle" :class="items.checked ? 'checkedsub' : 'nocheckedsub'">{{items.intro}}</div>
             <div class="price-box">
               <div class="rmb">￥</div>
               <div class="price">{{items.price}}</div>
@@ -52,15 +52,15 @@
       <div class="list-contain-out" v-if="nowIndex === 1">
         <div class="list-contain-must">
           <div class="box-contain" v-for="(items, idx) in mustList" :key="idx">
-            <div class="box-name">{{items.name}}</div>
-            <div class="box-content">{{items.content}}</div>
+            <div class="box-name">{{items.intro}}</div>
+            <div class="box-content">{{items.mean}}</div>
             <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
           </div>
         </div>
       </div>
     </div>
     <!-- 底部固定 -->
-    <div class="bottom-box">
+    <div class="bottom-box" v-if="!timeBox">
       <div class="bottom-left">
         <div class="price-box">
           <div class="rmb">¥</div>
@@ -70,11 +70,18 @@
       </div>
       <button class="confirm-btn" @click="confirm">确认选择</button>
     </div>
+    <div class="bottom-box" v-if="timeBox">
+      <div class="time-bottom-left">
+        <div class="time-price-box">{{leftContent}}</div>
+        <div class="time-price-content">如需调整，请在倒计时结束前戳右方</div>
+      </div>
+      <button class="confirm-btn" @click="confirm">去调整</button>
+    </div>
   </div>
 </template>
 
 <script>
-import { GetNewsList } from '@ajax'
+import axios from 'axios'
 export default {
   name: 'Home',
   data () {
@@ -89,15 +96,15 @@ export default {
       cutPrice: 0,
       ninePrice: 0,
       finalPrice: 0,
-      nowIndex: 0
+      nowIndex: 0,
+      sideList: [],
+      timeBox: false,
+      leftContent: ''
     }
   },
   components: {
   },
   created () {
-    GetNewsList().then(res => {
-      console.log(res)
-    })
   },
   beforeRouteEnter (to, from, next) {
     if (from.name === 'success') { // 这个name是下一级页面的路由name
@@ -106,7 +113,7 @@ export default {
     next()
   },
   activated () {
-    if (!this.$route.meta.isBack || this.isFirstEnter) {
+    if ((!this.$route.meta.isBack || this.isFirstEnter) && !this.$route.params.checkStatus) {
       // this.initData() // 这里许要初始化dada()中的数据
       this.getDataFn() // 这里发起数据请求，（之前是放在created或者mounted中，现在只需要放在这里就好了，不需要再在created或者mounted中请求！！）
     }
@@ -122,16 +129,88 @@ export default {
     }
   },
   mounted () {
+    if (this.$route.params.checkStatus) {
+      this.timeBox = true
+      this.getCheckData()
+    }
   },
   methods: {
     getDataFn () {
-      console.log('status:', this.$route.params.data)
+      console.log('status:', this.$route.params.data.finalArry)
       this.selfList = this.$route.params.data.finalArry
       this.mustList = this.$route.params.data.mustList
       this.totalPrice = this.$route.params.data.totalPrice
       this.cutPrice = this.$route.params.data.cutPrice
       this.ninePrice = this.$route.params.data.ninePrice
       this.finalPrice = this.$route.params.data.finalPrice
+    },
+    getCheckData () {
+      let that = this
+      axios({
+        method: 'get',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        url: 'examined/getUserCategory',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {}
+      }).then(function (res) {
+        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:', res)
+        that.totalPrice = res.data.data.total_price
+        that.cutPrice = res.data.data.subsidies
+        that.ninePrice = res.data.data.beyond_price
+        that.finalPrice = res.data.data.final_price
+        that.leftTime = res.data.data.time_end
+        that.countTime(res.data.data.time_end)
+        that.downData(res.data.data.list)
+      }).catch(function (err) {
+        console.log('请求失败', err)
+      })
+    },
+    downData (data) {
+      let dataList = []
+      for (const key in data) {
+        let temp = {}
+        temp.name = key
+        temp.checked = false
+        if (key === '心脑血管') {
+          temp.checked = true
+        }
+        temp.chooseNum = 0
+        temp.list = data[key]
+        dataList.push(temp)
+      }
+      console.log('处理后的列表为：', dataList)
+      this.sideList = dataList
+      let finalArry = []
+      for (let i = 1; i < this.sideList.length; i++) {
+        for (let j = 0; j < this.sideList[i].list.length; j++) {
+          if (this.sideList[i].list[j].checked) {
+            finalArry.push(this.sideList[i].list[j])
+          }
+        }
+      }
+      this.mustList = this.sideList[0].list
+      this.selfList = finalArry
+    },
+    countTime (differTime) {
+      let that = this
+      var h, m, s
+      if (differTime >= 0) {
+        h = Math.floor(differTime / 60 / 60)
+        m = Math.floor(differTime / 60 % 60)
+        s = Math.floor(differTime % 60)
+        h = h < 10 ? ('0' + h) : h
+        m = m < 10 ? ('0' + m) : m
+        s = s < 10 ? ('0' + s) : s
+        var timeDom = h + ':' + m + ':' + s
+        this.leftContent = timeDom
+        // 递归调用函数所以是延时器不是定时器
+        setTimeout(function () {
+          differTime -= 1
+          that.countTime(differTime)
+        }, 1000)
+      } else {
+        this.leftContent = '00:00:00'
+      }
     },
     showPop () {
       this.popShow = true
@@ -143,7 +222,32 @@ export default {
       this.idNum = e.target.value
     },
     confirm () {
-      this.$router.push({ name: 'success', params: { price: this.finalPrice } })
+      let that = this
+      let info = JSON.parse(localStorage.getItem('USER'))
+      let ids = []
+      for (let i = 0; i < this.selfList.length; i++) {
+        ids.push(this.selfList[i].id)
+      }
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        url: 'examined/entryData',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {
+          // name: info.name,
+          // sex: info.sex,
+          // age: info.age,
+          pregnant: info.pregnant,
+          profession: info.profession === '非职业' ? 0 : 1,
+          base_medica: 1,
+          pids: JSON.stringify(ids)
+        }
+      }).then(function (res) {
+        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:', res)
+        that.$router.push({ name: 'success', params: { prompt: res.data.data.prompt } })
+      }).catch(function (err) {
+        console.log('请求失败', err)
+      })
     },
     selectTab (idx) {
       this.nowIndex = idx
@@ -446,6 +550,28 @@ export default {
         color:rgba(75,75,75,1);
         line-height:17px;
         margin-bottom: -4px;
+      }
+    }
+    .time-bottom-left{
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+      .time-price-box{
+        height:18px;
+        font-size:18px;
+        font-family:PingFangSC-Semibold;
+        font-weight:600;
+        color:rgba(42,42,42,1);
+        line-height:18px;
+      }
+      .time-price-content{
+        margin-top: 2px;
+        height:16px;
+        font-size:11px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(75,75,75,1);
+        line-height:16px;
       }
     }
     .confirm-btn{

@@ -8,6 +8,7 @@ import Recommend from '@/pages/recommend/index'
 import Success from '@/pages/success/index'
 import Myself from '@/pages/myself/index'
 import Confirm from '@/pages/confirm/index'
+import LoginMain from '@/pages/login-main/index'
 Vue.use(Router)
 
 export default new Router({
@@ -63,6 +64,14 @@ export default new Router({
       name: 'confirm',
       path: '/confirm',
       component: Confirm,
+      meta: {
+        keepAlive: true,
+        isBack: false
+      }
+    }, {
+      name: 'login-main',
+      path: '/login-main',
+      component: LoginMain,
       meta: {
         keepAlive: true,
         isBack: false

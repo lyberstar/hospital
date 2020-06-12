@@ -5,10 +5,10 @@
     <!-- 顶部title盒子 -->
     <div class="top-box">
       <div class="top-title">
-        <div class="name-box">Hello！李磊</div>
-        <div class="tag-box">非职业病高发工种</div>
+        <div class="name-box">Hello！{{info.name}}</div>
+        <div class="tag-box">{{info.profession === '非职业' ? '非职业病高发工种' : '职业病高发工种'}}</div>
       </div>
-      <div class="top-content">26岁 男 处于备孕期</div>
+      <div class="top-content">{{info.age}}岁 {{info.sex}} {{info.pregnantString === '非备孕' ? '非备孕期/孕期' : '备孕期/孕期'}}</div>
     </div>
     <!-- 主体部分 -->
     <div class="body-box">
@@ -34,21 +34,20 @@
 </template>
 
 <script>
-import { GetNewsList } from '@ajax'
 export default {
   name: 'Home',
   data () {
     return {
       idRight: true,
-      popShow: false
+      popShow: false,
+      info: ''
     }
   },
   components: {
   },
   created () {
-    GetNewsList().then(res => {
-      console.log(res)
-    })
+    let info = localStorage.getItem('USER')
+    this.info = JSON.parse(info)
   },
   computed: {
     popTitle () {
@@ -184,11 +183,11 @@ export default {
         height: 14px;
       }
       .back-heart{
-        width: 68px;
-        height: 68px;
+        width: 74px;
+        height: 74px;
         position: absolute;
-        top: 20px;
-        right: 60px;
+        top: 16px;
+        right: 32px;
       }
     }
     .bottom-icon{

@@ -11,8 +11,7 @@
     <div class="body-box">
       <div class="id-title">
         <div class="code-title">请输入验证码</div>
-        <div v-show="codeShow" @click="getCode">获取验证码</div>
-        <div v-show="!codeShow" class="count">{{codeCount}} s</div>
+        <div @click="getMobileCode" :class="wait_timer > 0 ? 'getcode-small' : 'getcode-big'">{{ getMobileCodeText() }}</div>
       </div>
       <div class="digit-wrapper">
         <input v-for="(item,index) in digits"
@@ -35,17 +34,16 @@
       <div class="pop-body">
         <div class="pop-title-box">
           <div class="pop-title">{{popTitle}}</div>
-          <div class="pop-content" v-if="popContent">无论男女，如果您未来半年有怀孕的打算，我们将为您去掉带有强辐射性等可能会影响胎儿的项目。</div>
-          <div class="pop-content" v-if="!popContent">
-            <p class="nomal">如果您是卷烟厂员工，请确认您输入的</p>
-            <p class="green"> 身份证号码 </p>
-            <p>是否正确！</p>
-          </div>
+          <div class="pop-content" v-if="!fistSelectDone">无论男女，如果您未来3个月有怀孕的打算，或正在孕期我们将为您去掉带有强辐射性等可能会影响胎儿的项目。</div>
+          <div class="pop-content" v-if="fistSelectDone">是否是职业病工种将影响您的检查项目种类。</div>
         </div>
-        <div class="button-box">
-          <button class="color-btn" v-if="!idRight" @click="hidePop">点此重试</button>
-          <button class="color-btn" v-if="idRight" @click="turnToMain(1)">最近半年有怀孕打算</button>
-          <div class="no-color" v-if="idRight" @click="turnToMain(0)">最近半年没有怀孕打算</div>
+        <div class="button-box" v-if="!fistSelectDone">
+          <button class="color-btn" @click="turnToNext(1)">最近三个月有怀孕打算或正在孕期</button>
+          <div class="no-color" @click="turnToNext(0)">不处于孕期，且最近三个月没有怀孕打算</div>
+        </div>
+        <div class="button-box-next" v-if="fistSelectDone">
+          <button class="color-btn-next" @click="turnToMain(1)">是职业病工种</button>
+          <button class="no-color-next" @click="turnToMain(0)">不是职业病工种</button>
         </div>
       </div>
     </div>
@@ -53,12 +51,12 @@
 </template>
 
 <script>
-import { GetNewsList } from '@ajax'
+import axios from 'axios'
 export default {
   name: 'Home',
   data () {
     return {
-      idRight: true,
+      fistSelectDone: false,
       popShow: false,
       digits: [
         {
@@ -74,17 +72,16 @@ export default {
           value: ''
         }
       ],
-      codeShow: true,
-      codeCount: '',
-      timer: null
+      wait_timer: false,
+      idCard: '',
+      disabled: true,
+      pregnant: '',
+      profession: ''
     }
   },
   components: {
   },
   created () {
-    GetNewsList().then(res => {
-      console.log(res)
-    })
   },
   watch: {
     // loginPhone (newValue, oldValue) {
@@ -100,22 +97,72 @@ export default {
   },
   computed: {
     popTitle () {
-      return this.idRight ? '是否处于备孕期？' : '抱歉！该体检项目预约方式为卷烟厂员工专属通道'
-    },
-    popContent () {
-      return this.idRight
+      return !this.fistSelectDone ? '您是否处于备孕期，或正在孕期？' : '您是否是职业病工种？'
     }
   },
-  mounted () {},
+  mounted () {
+    this.idCard = this.$route.params.idCard
+    this.phone = this.$route.params.phone
+    console.log('this.idCard:', this.$route.params.idCard)
+    this.getMobileCode()
+  },
   methods: {
     showPop () {
-      this.popShow = true
+      let codeTemp = ''
+      let that = this
+      for (let i = 0; i < this.digits.length; i++) {
+        codeTemp += this.digits[i].value
+      }
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        url: 'examined/getUserByPhone',
+        headers: { 'token': localStorage.getItem('JWT_TOKEN') },
+        data: {
+          card: this.idCard,
+          code: codeTemp,
+          phone: this.phone
+        }
+      }).then(function (res) {
+        console.log(res)
+        if (res.data.data.ptoken) {
+          localStorage.setItem('LOGIN_TOKEN', res.data.data.ptoken)
+          that.popShow = true
+        }
+      }).catch(function (err) {
+        console.log('请求失败', err)
+      })
     },
     hidePop () {
       this.popShow = false
     },
-    turnToMain (status) {
-      this.$router.push({ name: 'main', params: { status } })
+    turnToNext (idx) {
+      this.pregnant = idx
+      this.fistSelectDone = true
+    },
+    turnToMain (idx) {
+      let that = this
+      this.profession = idx
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        url: 'examined/getUserInfo',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {
+          pregnant: this.pregnant,
+          profession: this.profession
+        }
+      }).then(function (res) {
+        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:', res)
+        if (res.data.status === '200') {
+          // 成功了
+          localStorage.setItem('USER', JSON.stringify(res.data.data.user))
+          that.$router.push({ name: 'main' })
+        }
+      }).catch(function (err) {
+        console.log('请求失败', err)
+      })
+      // this.$router.push({ name: 'main', params: { status } })
     },
     onInput (index) {
       // index < 5 ，如果是第6格，不触发光标移动至下一个输入框。
@@ -129,21 +176,36 @@ export default {
         this.$refs['ref' + (index - 1)][0].focus()
       }
     },
-    getCode () {
-      const TIME_COUNT = 60
-      console.log(111)
-      if (!this.timer) {
-        this.count = TIME_COUNT
-        this.show = false
-        this.timer = setInterval(() => {
-          if (this.count > 0 && this.count <= TIME_COUNT) {
-            this.count--
-          } else {
-            this.show = true
-            clearInterval(this.timer)
-            this.timer = null
-          }
-        }, 1000)
+    getMobileCode () {
+      if (this.wait_timer > 0) {
+        return false
+      }
+      this.wait_timer = 59
+      var that = this
+      var timerinterval = setInterval(function () {
+        if (that.wait_timer > 0) {
+          that.wait_timer--
+        } else {
+          clearInterval(timerinterval)
+        }
+      }, 1000)
+      if (this.getMobileCodeText() === '重新发送验证码') {
+        console.log('aaaaaaaaaaaaaaaaa')
+        this.showPop()
+      }
+      // 在这里调取你获取验证码的ajax
+    },
+    getMobileCodeText: function () {
+      if (this.wait_timer > 0) {
+        return this.wait_timer + 's'
+      }
+
+      if (this.wait_timer === 0) {
+        return '重新发送验证码'
+      }
+
+      if (this.wait_timer === false) {
+        return '获取验证码'
       }
     }
   }
@@ -202,13 +264,34 @@ export default {
     box-sizing: border-box;
     z-index: 2;
     .id-title{
-      height:20px;
-      font-size:14px;
-      font-family:PingFangSC-Regular,PingFang SC;
-      font-weight:400;
-      color:rgba(42,42,42,1);
-      line-height:20px;
       margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .code-title{
+        height:20px;
+        font-size:14px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(42,42,42,1);
+        line-height:20px;
+      }
+      .getcode-small{
+        height:16px;
+        font-size:11px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(152,152,152,1);
+        line-height:16px;
+      }
+      .getcode-big{
+        height:16px;
+        font-size:11px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(27,183,99,1);
+        line-height:16px;
+      }
     }
     .digit-wrapper{
       display: flex;
@@ -273,7 +356,7 @@ export default {
       border-radius:8px 8px 0px 0px;
       position: absolute;
       bottom: 0;
-      padding: 32px 24px 16px;
+      padding: 32px 24px 23px;
       box-sizing: border-box;
       z-index: 11;
       display: flex;
@@ -334,6 +417,40 @@ export default {
           color:rgba(18,178,111,1);
           line-height:20px;
           height:20px;
+        }
+      }
+      .button-box-next{
+        display: flex;
+        justify-content: space-between;
+        .color-btn-next{
+          width:153px;
+          height:40px;
+          background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
+          border-radius:4px;
+          font-size:16px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(255,255,255,1);
+          line-height:16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 0!important;
+        }
+        .no-color-next{
+          width:153px;
+          height:40px;
+          border-radius:4px;
+          border:1px solid rgba(26,180,116,1);
+          font-size:16px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(26,180,116,1);
+          line-height:16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #ffffff;
         }
       }
     }

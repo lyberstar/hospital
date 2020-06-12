@@ -14,8 +14,8 @@
         <!-- 基础检查 -->
         <block v-if="noTitle === '基础检查'">
           <div class="box-contain" v-for="(items, idx) in sideList[nowIndex].list" :key="idx">
-            <div class="box-name">{{items.name}}</div>
-            <div class="box-content">{{items.content}}</div>
+            <div class="box-name">{{items.intro}}</div>
+            <div class="box-content">{{items.mean}}</div>
             <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
           </div>
         </block>
@@ -26,16 +26,16 @@
             <div class="other-top" :class="items.checked ? 'checkedtop' : 'nocheckedtop'">
               <div class="small-title-box">
                 <div class="title" :class="items.checked ? 'checkedtitle' : 'nocheckedtitle'">{{items.name}}</div>
-                <img class="tag-icon" src="../../assets/images/ic-book.png" />
+                <img class="tag-icon" v-if="items.showTag" src="../../assets/images/ic-book.png" />
               </div>
-              <div class="subtitle" :class="items.checked ? 'checkedsub' : 'nocheckedsub'">{{items.subName}}</div>
+              <div class="subtitle" :class="items.checked ? 'checkedsub' : 'nocheckedsub'">{{items.intro}}</div>
               <div class="price-box">
                 <div class="rmb">￥</div>
                 <div class="price">{{items.price}}</div>
               </div>
             </div>
             <div class="other-bottom">
-              <div class="content" v-if="items.open">{{items.detail}}</div>
+              <div class="content" v-if="items.open">{{items.mean}}</div>
               <div class="open-box" @click.stop="openDetail(idx)">
                 <div class="open-text">{{items.open ? '收起详情' : '展开详情'}}</div>
                 <img class="open-icon" v-if="items.open" src="../../assets/images/ic-top.png" />
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { GetNewsList } from '@ajax'
+import axios from 'axios'
 export default {
   name: 'Home',
   data () {
@@ -529,9 +529,7 @@ export default {
   components: {
   },
   created () {
-    GetNewsList().then(res => {
-      console.log(res)
-    })
+    this.getDataList()
   },
   computed: {
     finalPrice () {
@@ -590,6 +588,52 @@ export default {
     console.log('status:', this.$route.params.status)
   },
   methods: {
+    getDataList () {
+      let that = this
+      axios({
+        method: 'get',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        url: 'examined/getUserCategory',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {}
+      }).then(function (res) {
+        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:', res)
+        this.topPriceNum = res.data.data.subsidies
+        that.downData(res.data.data.list)
+      }).catch(function (err) {
+        console.log('请求失败', err)
+      })
+
+      // GetNewsList().then(res => {
+      //   let data = res.data.data
+      //   // let dataList = []
+      //   for (const key in data) {
+      //     let temp = {}
+      //     temp.name = key
+      //     temp.checked = false
+      //     if (key === '心脑血管') {
+      //       temp.checked = true
+      //     }
+      //     temp.chooseNum = 0
+      //   }
+      // })
+    },
+    downData (data) {
+      let dataList = []
+      for (const key in data) {
+        let temp = {}
+        temp.name = key
+        temp.checked = false
+        if (key === '心脑血管') {
+          temp.checked = true
+        }
+        temp.chooseNum = 0
+        temp.list = data[key]
+        dataList.push(temp)
+      }
+      console.log('处理后的列表为：', dataList)
+      this.sideList = dataList
+    },
     showPop () {
       this.popShow = true
     },
