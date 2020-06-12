@@ -75,7 +75,7 @@
         <div class="time-price-box">{{leftContent}}</div>
         <div class="time-price-content">如需调整，请在倒计时结束前戳右方</div>
       </div>
-      <button class="confirm-btn" @click="confirm">去调整</button>
+      <button class="confirm-btn">去调整</button>
     </div>
   </div>
 </template>

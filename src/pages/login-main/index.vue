@@ -74,6 +74,7 @@ export default {
       pregnant: '',
       profession: '',
       info: '',
+      planType: '',
       isPassed: true // 审核是否通过
     }
   },
@@ -104,13 +105,18 @@ export default {
           that.isPassed = false
         } else {
           that.isPassed = true
+          that.planType = res.data.data.planType
         }
       }).catch(function (err) {
         console.log('请求失败', err)
       })
     },
     checkAlready () {
-      this.$router.push({ name: 'confirm', params: { checkStatus: 'formCheck' } })
+      if (this.planType === '自选') {
+        this.$router.push({ name: 'confirm', params: { checkStatus: 'formCheck' } })
+      } else {
+        this.$router.push({ name: 'recommend' })
+      }
     },
     forOthers () {
       this.isPassed = false

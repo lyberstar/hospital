@@ -14,8 +14,8 @@
     <div class="body-box">
       <div class="body-title">推荐套餐</div>
       <div class="box-contain" v-for="(items, idx) in checkList" :key="idx">
-        <div class="box-name">{{items.name}}</div>
-        <div class="box-content">{{items.content}}</div>
+        <div class="box-name">{{items.intro}}</div>
+        <div class="box-content">{{items.mean}}</div>
         <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
       </div>
     </div>
@@ -118,6 +118,7 @@ export default {
         data: {}
       }).then(function (res) {
         console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊22222:', res)
+        that.checkList = res.data.data.list
       }).catch(function (err) {
         console.log('请求失败', err)
       })
@@ -132,7 +133,25 @@ export default {
       this.idNum = e.target.value
     },
     confirm () {
-      this.$router.push({ name: 'success' })
+      let that = this
+      let info = JSON.parse(localStorage.getItem('USER'))
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        url: 'examined/SubmitRecommendedPackages',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {
+          pregnant: info.pregnant,
+          profession: info.profession === '非职业' ? 0 : 1
+        }
+      }).then(function (res) {
+        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊333:', res)
+        if (res.data.status === '200') {
+          that.$router.push({ name: 'success' })
+        }
+      }).catch(function (err) {
+        console.log('请求失败', err)
+      })
     }
   }
 }
