@@ -37,6 +37,7 @@
 
 <script>
 import { UpIdCard } from '@ajax'
+// import axios from 'axios'
 export default {
   name: 'Home',
   data () {
@@ -74,6 +75,7 @@ export default {
   mounted () {},
   methods: {
     testId () {
+      // let that = this
       if (this.checkIDCard(this.idNum)) {
         UpIdCard({ id_card: this.idNum }).then(res => {
           console.log(res)
@@ -84,6 +86,21 @@ export default {
             this.$router.push({ name: 'phone', params: { idNum: this.idNum } })
           }
         })
+        // axios.get('examined/getUserByCard', {
+        //   params: {
+        //     id_card: this.idNum
+        //   }
+        // }).then(function (res) {
+        //   console.log('resssssssssssssssssssss:', res)
+        //   if (res.data.extend === 400) {
+        //     that.showPop()
+        //   } else {
+        //     localStorage.setItem('JWT_TOKEN', res.data.data.token)
+        //     that.$router.push({ name: 'phone', params: { idNum: this.idNum } })
+        //   }
+        // }).catch(function (err) {
+        //   console.log('请求失败', err)
+        // })
       } else {
         this.$toast('格式不正确')
       }

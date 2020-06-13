@@ -597,8 +597,8 @@ export default {
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
       }).then(function (res) {
-        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:', res)
-        this.topPriceNum = res.data.data.subsidies
+        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊3:', res.data.data.subsidies)
+        that.topPriceNum = res.data.data.subsidies
         that.downData(res.data.data.list)
       }).catch(function (err) {
         console.log('请求失败', err)
