@@ -66,7 +66,7 @@ export default {
       } else {
         axios({
           method: 'post',
-          baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+          baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
           url: 'examined/sendCode',
           headers: { 'token': localStorage.getItem('JWT_TOKEN') },
           data: {

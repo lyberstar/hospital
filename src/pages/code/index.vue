@@ -115,7 +115,7 @@ export default {
       }
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
         url: 'examined/getUserByPhone',
         headers: { 'token': localStorage.getItem('JWT_TOKEN') },
         data: {
@@ -145,7 +145,7 @@ export default {
       this.profession = idx
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : '',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
         url: 'examined/getUserInfo',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {

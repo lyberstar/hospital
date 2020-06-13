@@ -5,6 +5,7 @@ let baseURL
 if (debug) {
   baseURL = '/app/'
 } else {
+  baseURL = 'http://139.155.94.28/app/'
   // baseURL = '根据实际情况判断测试环境还是正式环境'
 }
 
