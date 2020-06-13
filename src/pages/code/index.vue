@@ -1,5 +1,6 @@
 <template>
   <div class="body-contain">
+    <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 顶部背景图 -->
     <img class="back-image" src="../../assets/images/ic-back.png" />
     <!-- 顶部title盒子 -->
@@ -76,7 +77,8 @@ export default {
       idCard: '',
       disabled: true,
       pregnant: '',
-      profession: ''
+      profession: '',
+      isActive: false
     }
   },
   components: {
@@ -108,6 +110,7 @@ export default {
   },
   methods: {
     showPop () {
+      this.isActive = true
       let codeTemp = ''
       let that = this
       for (let i = 0; i < this.digits.length; i++) {
@@ -124,12 +127,13 @@ export default {
           phone: this.phone
         }
       }).then(function (res) {
-        console.log(res)
+        that.isActive = false
         if (res.data.data.ptoken) {
           localStorage.setItem('LOGIN_TOKEN', res.data.data.ptoken)
           that.popShow = true
         }
       }).catch(function (err) {
+        that.isActive = false
         console.log('请求失败', err)
       })
     },
@@ -141,6 +145,7 @@ export default {
       this.fistSelectDone = true
     },
     turnToMain (idx) {
+      this.isActive = true
       let that = this
       this.profession = idx
       axios({
@@ -153,13 +158,14 @@ export default {
           profession: this.profession
         }
       }).then(function (res) {
-        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:', res)
+        that.isActive = false
         if (res.data.status === '200') {
           // 成功了
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
           that.$router.push({ name: 'main' })
         }
       }).catch(function (err) {
+        that.isActive = false
         console.log('请求失败', err)
       })
       // this.$router.push({ name: 'main', params: { status } })
@@ -176,7 +182,34 @@ export default {
         this.$refs['ref' + (index - 1)][0].focus()
       }
     },
+    sendCode () {
+      this.isActive = true
+      let that = this
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        url: 'examined/sendCode',
+        headers: { 'token': localStorage.getItem('JWT_TOKEN') },
+        data: {
+          card: that.idcard,
+          phone: that.phone
+        }
+      }).then(function (res) {
+        that.isActive = false
+        if (res.data.data) {
+          that.$router.push({ name: 'code', params: { idCard: that.idcard, phone: number } })
+        } else {
+          that.$toast(res.data.msg)
+        }
+      }).catch(function (err) {
+        that.isActive = false
+        console.log('请求失败', err)
+      })
+    },
     getMobileCode () {
+      if (this.getMobileCodeText() === '重新发送验证码') {
+        this.sendCode()
+      }
       if (this.wait_timer > 0) {
         return false
       }
@@ -189,10 +222,6 @@ export default {
           clearInterval(timerinterval)
         }
       }, 1000)
-      if (this.getMobileCodeText() === '重新发送验证码') {
-        console.log('aaaaaaaaaaaaaaaaa')
-        this.showPop()
-      }
       // 在这里调取你获取验证码的ajax
     },
     getMobileCodeText: function () {

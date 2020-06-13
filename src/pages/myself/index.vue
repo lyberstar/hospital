@@ -1,5 +1,6 @@
 <template>
   <div class="body-contain">
+    <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 侧边栏 -->
     <div class="sidebar-contain">
       <div @click="clickSider(idx)" class="sidebar-box" :class="items.checked ? 'checked' : 'nochecked'" v-for="(items, idx) in sideList" :key="idx">{{items.name}}<div class="choose-num" v-if="items.chooseNum > 0">{{items.chooseNum}}</div></div>
@@ -523,6 +524,7 @@ export default {
       noTitle: '心脑血管',
       nowIndex: 1,
       popShow: false,
+      isActive: false,
       topPriceNum: 380 // 最高免减
     }
   },
@@ -589,6 +591,7 @@ export default {
   },
   methods: {
     getDataList () {
+      this.isActive = true
       let that = this
       axios({
         method: 'get',
@@ -597,10 +600,11 @@ export default {
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
       }).then(function (res) {
-        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊3:', res.data.data.subsidies)
+        that.isActive = false
         that.topPriceNum = res.data.data.subsidies
         that.downData(res.data.data.list)
       }).catch(function (err) {
+        that.isActive = false
         console.log('请求失败', err)
       })
 

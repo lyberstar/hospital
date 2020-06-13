@@ -1,5 +1,6 @@
 <template>
   <div class="body-contain">
+    <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 顶部背景图 -->
     <img class="back-image" src="../../assets/images/ic-back.png" />
     <!-- 顶部title盒子 -->
@@ -45,7 +46,8 @@ export default {
       idRight: false,
       popShow: false,
       loginPhone: '',
-      idNum: ''
+      idNum: '',
+      isActive: false
     }
   },
   components: {
@@ -72,13 +74,15 @@ export default {
       return this.idRight ? '是否处于备孕期？' : '抱歉！该体检项目预约方式为卷烟厂员工专属通道'
     }
   },
-  mounted () {},
+  mounted () {
+  },
   methods: {
     testId () {
       // let that = this
+      this.isActive = true
       if (this.checkIDCard(this.idNum)) {
         UpIdCard({ id_card: this.idNum }).then(res => {
-          console.log(res)
+          this.isActive = false
           if (res.data.extend === 400) {
             this.showPop()
           } else {
@@ -102,6 +106,7 @@ export default {
         //   console.log('请求失败', err)
         // })
       } else {
+        this.isActive = false
         this.$toast('格式不正确')
       }
     },

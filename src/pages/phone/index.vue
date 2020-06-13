@@ -1,5 +1,6 @@
 <template>
   <div class="body-contain">
+    <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 顶部背景图 -->
     <img class="back-image" src="../../assets/images/ic-back.png" />
     <!-- 顶部title盒子 -->
@@ -28,7 +29,8 @@ export default {
       popShow: false,
       loginPhone: '',
       idNum: '',
-      idcard: ''
+      idcard: '',
+      isActive: false
     }
   },
   components: {
@@ -59,8 +61,10 @@ export default {
     },
     turnToMain () {
       let that = this
+      this.isActive = true
       var number = this.idNum.replace(/\s*/g, '')
       if (!(/^1[3456789]\d{9}$/.test(number))) {
+        this.isActive = false
         this.$toast('手机号码不正确')
         return false
       } else {
@@ -74,17 +78,16 @@ export default {
             phone: number
           }
         }).then(function (res) {
-          console.log(res)
+          that.isActive = false
           if (res.data.data) {
             that.$router.push({ name: 'code', params: { idCard: that.idcard, phone: number } })
+          } else {
+            this.$toast(res.data.msg)
           }
         }).catch(function (err) {
+          that.isActive = false
           console.log('请求失败', err)
         })
-        // UpPhone({ id_card: this.idcard }).then(res => {
-        //   console.log(res)
-        // })
-        // this.$router.push({ name: 'code' })
       }
     }
   }

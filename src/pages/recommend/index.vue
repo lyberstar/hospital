@@ -1,5 +1,6 @@
 <template>
   <div class="body-contain">
+    <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 顶部背景图 -->
     <img class="back-image" src="../../assets/images/ic-back.png" />
     <!-- 顶部title盒子 -->
@@ -42,6 +43,7 @@ export default {
       idRight: true,
       popShow: false,
       price: 0,
+      isActive: false,
       checkList: [
         {
           name: '一般检查',
@@ -109,6 +111,7 @@ export default {
   },
   methods: {
     getDataListw () {
+      this.isActive = true
       let that = this
       axios({
         method: 'get',
@@ -117,9 +120,10 @@ export default {
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
       }).then(function (res) {
-        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊22222:', res)
+        that.isActive = false
         that.checkList = res.data.data.list
       }).catch(function (err) {
+        that.isActive = false
         console.log('请求失败', err)
       })
     },
@@ -133,6 +137,7 @@ export default {
       this.idNum = e.target.value
     },
     confirm () {
+      this.isActive = true
       let that = this
       let info = JSON.parse(localStorage.getItem('USER'))
       axios({
@@ -145,11 +150,12 @@ export default {
           profession: info.profession === '非职业' ? 0 : 1
         }
       }).then(function (res) {
-        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊333:', res)
+        that.isActive = false
         if (res.data.status === '200') {
           that.$router.push({ name: 'success' })
         }
       }).catch(function (err) {
+        that.isActive = false
         console.log('请求失败', err)
       })
     }

@@ -1,5 +1,6 @@
 <template>
   <div class="body-contain">
+    <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 顶部背景图 -->
     <img class="back-image" src="../../assets/images/ic-back.png" />
     <!-- 顶部title盒子 -->
@@ -75,6 +76,7 @@ export default {
       profession: '',
       info: '',
       planType: '',
+      isActive: false,
       isPassed: true // 审核是否通过
     }
   },
@@ -93,6 +95,7 @@ export default {
   methods: {
     getStatusData () {
       let that = this
+      that.isActive = true
       axios({
         method: 'post',
         baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
@@ -100,7 +103,7 @@ export default {
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
       }).then(function (res) {
-        console.log('啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:', res)
+        that.isActive = false
         if (res.data.data.status === 2) {
           that.isPassed = false
         } else {
@@ -108,6 +111,7 @@ export default {
           that.planType = res.data.data.planType
         }
       }).catch(function (err) {
+        that.isActive = false
         console.log('请求失败', err)
       })
     },
@@ -137,6 +141,7 @@ export default {
     },
     recodePro (idx) {
       this.profession = idx
+      this.isActive = true
       // 请求接口
       let that = this
       axios({
@@ -149,12 +154,14 @@ export default {
           profession: this.profession
         }
       }).then(function (res) {
+        that.isActive = false
         if (res.data.status === '200') {
           // 成功了
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
           that.$router.push({ name: 'main' })
         }
       }).catch(function (err) {
+        that.isActive = false
         console.log('请求失败', err)
       })
     }
