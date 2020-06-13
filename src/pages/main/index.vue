@@ -72,12 +72,15 @@ export default {
       info: '',
       showChangeCheck: false,
       step: 2,
-      isActive: false
+      isActive: false,
+      is_adjus: false
     }
   },
   components: {
   },
   created () {
+    console.log('is_adjus:', this.$route.params.is_adjus)
+    this.is_adjus = this.$route.params.is_adjus || false
     let info = localStorage.getItem('USER')
     this.info = JSON.parse(info)
   },
@@ -90,7 +93,6 @@ export default {
     }
   },
   mounted () {
-    console.log('status:', this.$route.params.status)
   },
   methods: {
     showPop () {
@@ -103,10 +105,10 @@ export default {
       this.idNum = e.target.value
     },
     turnDefault () {
-      this.$router.push({ name: 'recommend' })
+      this.$router.push({ name: 'recommend', params: { is_adjus: this.is_adjus } })
     },
     turnMyself () {
-      this.$router.push({ name: 'myself' })
+      this.$router.push({ name: 'myself', params: { is_adjus: this.is_adjus } })
     },
     changeCheck () {
       this.showChangeCheck = true
@@ -139,6 +141,8 @@ export default {
           // 成功了
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
           that.$router.go(0)
+        } else {
+          that.$toast(res.data.msg)
         }
       }).catch(function (err) {
         that.isActive = true

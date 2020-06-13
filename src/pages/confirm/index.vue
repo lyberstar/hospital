@@ -6,21 +6,21 @@
     <!-- 顶部title盒子 -->
     <div class="top-box">
       <div class="top-title">
-        <div class="name-box">李磊的体检计划</div>
-        <div class="tag-box">非职业病高发工种</div>
+        <div class="name-box">{{info.name}}的体检计划</div>
+        <div class="tag-box">{{info.profession === '非职业' ? '非职业病高发工种' : '职业病高发工种'}}</div>
       </div>
-      <div class="top-content">26岁 男 处于备孕期</div>
+      <div class="top-content">{{info.age}}岁 {{info.sex}} {{info.pregnantString === '非备孕' ? '非备孕期/孕期' : '备孕期/孕期'}}</div>
     </div>
     <!-- 主体部分 -->
     <div class="body-box">
       <div class="tab-contain">
         <div class="tab-box" @click="selectTab(0)">
           <div class="tab-content" :class="nowIndex === 0 ? 'heavy' : 'nomal'">自选检查部分</div>
-          <div class="tab-line" v-show="nowIndex === 0"></div>
+          <div class="tab-line" v-if="nowIndex === 0"></div>
         </div>
         <div class="tab-box" @click="selectTab(1)">
           <div class="tab-content" :class="nowIndex === 1 ? 'heavy' : 'nomal'">基础检查部分</div>
-          <div class="tab-line" v-show="nowIndex === 1"></div>
+          <div class="tab-line" v-if="nowIndex === 1"></div>
         </div>
       </div>
       <div class="list-contain-out" v-if="nowIndex === 0">
@@ -61,7 +61,7 @@
       </div>
     </div>
     <!-- 弹窗 -->
-    <div class="pop-contain" v-if="showChangeCheck">
+    <div class="pop-contain" @touchmove.prevent v-if="showChangeCheck">
       <div class="back-hover"></div>
       <div class="pop-body" v-if="step === 2">
         <div class="pop-title-box">
@@ -127,12 +127,15 @@ export default {
       leftContent: '',
       leftTime: '',
       showChangeCheck: false,
-      isActive: false
+      isActive: false,
+      info: ''
     }
   },
   components: {
   },
   created () {
+    let info = localStorage.getItem('USER')
+    this.info = JSON.parse(info)
   },
   beforeRouteEnter (to, from, next) {
     if (from.name === 'success') { // 这个name是下一级页面的路由name
@@ -141,6 +144,9 @@ export default {
     next()
   },
   activated () {
+    console.log(!this.$route.meta.isBack)
+    console.log(this.isFirstEnter)
+    console.log(!this.$route.params.checkStatus)
     if ((!this.$route.meta.isBack || this.isFirstEnter) && !this.$route.params.checkStatus) {
       // this.initData() // 这里许要初始化dada()中的数据
       this.getDataFn() // 这里发起数据请求，（之前是放在created或者mounted中，现在只需要放在这里就好了，不需要再在created或者mounted中请求！！）
@@ -189,7 +195,9 @@ export default {
           // 成功了
           that.isActive = false
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
-          that.$router.push({ name: 'main' })
+          that.$router.push({ name: 'main', params: { is_adjus: true } })
+          that.showChangeCheck = false
+          that.timeBox = false
         }
       }).catch(function (err) {
         that.isActive = false

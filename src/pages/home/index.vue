@@ -57,6 +57,15 @@ export default {
       this.$router.replace({ name: 'login-main' })
     }
   },
+  activated () {
+    console.log('this.$route.params.reload:', this.$route.params.reload)
+    if (this.$route.params.reload) {
+      console.log('history1:', history)
+      let len = history.length
+      history.go(-(len - 2))
+      console.log('history2:', history)
+    }
+  },
   watch: {
     // loginPhone (newValue, oldValue) {
     //   newValue = newValue.replace(/\s+/g, '')

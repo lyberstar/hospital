@@ -13,12 +13,23 @@
       </div>
       <div class="right-body">
         <!-- 基础检查 -->
-        <block v-if="noTitle === '基础检查'">
+        <block name="boxname" v-if="noTitle === '基础检查'">
           <div class="box-contain" v-for="(items, idx) in sideList[nowIndex].list" :key="idx">
-            <div class="box-name">{{items.intro}}</div>
-            <div class="box-content">{{items.mean}}</div>
-            <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
+            <div class="other-top checkedtop">
+              <div class="box-name">{{items.name}}</div>
+              <div class="box-content">{{items.intro}}</div>
+              <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
+            </div>
+            <div class="other-bottom">
+              <div class="content" v-if="items.open">{{items.mean}}</div>
+              <div class="open-box" @click.stop="openDetail(idx)">
+                <div class="open-text">{{items.open ? '收起详情' : '查看详情'}}</div>
+                <img class="open-icon" v-if="items.open" src="../../assets/images/ic-top.png" />
+                <img class="open-icon" v-else src="../../assets/images/ic-bottom.png" />
+              </div>
+            </div>
           </div>
+
         </block>
         <!-- 其他检查 -->
         <block v-else>
@@ -38,7 +49,7 @@
             <div class="other-bottom">
               <div class="content" v-if="items.open">{{items.mean}}</div>
               <div class="open-box" @click.stop="openDetail(idx)">
-                <div class="open-text">{{items.open ? '收起详情' : '展开详情'}}</div>
+                <div class="open-text">{{items.open ? '收起详情' : '查看详情'}}</div>
                 <img class="open-icon" v-if="items.open" src="../../assets/images/ic-top.png" />
                 <img class="open-icon" v-else src="../../assets/images/ic-bottom.png" />
               </div>
@@ -522,15 +533,18 @@ export default {
         }
       ],
       noTitle: '心脑血管',
-      nowIndex: 1,
+      nowIndex: 2,
       popShow: false,
       isActive: false,
+      is_adjus: false,
       topPriceNum: 380 // 最高免减
     }
   },
   components: {
   },
   created () {
+    console.log('is_adjus:', this.$route.params.is_adjus)
+    this.is_adjus = this.$route.params.is_adjus || false
     this.getDataList()
   },
   computed: {
@@ -569,6 +583,7 @@ export default {
           }
         }
       }
+      console.log('我变了：', price)
       return price
     },
     ninePrice () {
@@ -587,18 +602,20 @@ export default {
     }
   },
   mounted () {
-    console.log('status:', this.$route.params.status)
   },
   methods: {
     getDataList () {
       this.isActive = true
       let that = this
+      this.is_adjus = this.$route.params.is_adjus || false
       axios({
         method: 'get',
         baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
         url: 'examined/getUserCategory',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
-        data: {}
+        params: {
+          is_adjus: that.is_adjus
+        }
       }).then(function (res) {
         that.isActive = false
         that.topPriceNum = res.data.data.subsidies
@@ -608,18 +625,19 @@ export default {
         console.log('请求失败', err)
       })
 
-      // GetNewsList().then(res => {
-      //   let data = res.data.data
-      //   // let dataList = []
-      //   for (const key in data) {
-      //     let temp = {}
-      //     temp.name = key
-      //     temp.checked = false
-      //     if (key === '心脑血管') {
-      //       temp.checked = true
-      //     }
-      //     temp.chooseNum = 0
+      // axios.get('examined/getUserCategory', {
+      //   baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+      //   headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+      //   params: {
+      //     is_adjus: that.is_adjus
       //   }
+      // }).then(function (res) {
+      //   that.isActive = false
+      //   that.topPriceNum = res.data.data.subsidies
+      //   that.downData(res.data.data.list)
+      // }).catch(function (err) {
+      //   that.isActive = false
+      //   console.log('请求失败', err)
       // })
     },
     downData (data) {
@@ -628,15 +646,27 @@ export default {
         let temp = {}
         temp.name = key
         temp.checked = false
+        temp.chooseNum = 0
         if (key === '心脑血管') {
           temp.checked = true
         }
-        temp.chooseNum = 0
+        if (key !== '基础检查') {
+          for (let i = 0; i < data[key].length; i++) {
+            if (data[key][i].checked) {
+              temp.chooseNum += 1
+            }
+          }
+        }
         temp.list = data[key]
         dataList.push(temp)
       }
       console.log('处理后的列表为：', dataList)
       this.sideList = dataList
+      for (let i = 0; i < dataList.length; i++) {
+        if (dataList[i].name === '心脑血管') {
+          this.nowIndex = i
+        }
+      }
     },
     showPop () {
       this.popShow = true
@@ -770,9 +800,7 @@ export default {
         width: 100%;
         display: flex;
         flex-direction: column;
-        padding: 11px 12px;
         box-sizing: border-box;
-        background:rgba(240,255,239,1);
         border-radius:8px;
         border:1px solid rgba(18,178,111,1);
         position: relative;
@@ -780,6 +808,45 @@ export default {
         margin-bottom: 11px;
         &:last-child{
           margin-bottom: 78px!important;
+        }
+        &:first-child{
+          margin-top: 12px;
+        }
+        .other-bottom{
+          display: flex;
+          flex-direction: column;
+          .content{
+            padding: 6px 12px;
+            font-size:11px;
+            font-family:PingFangSC-Regular,PingFang SC;
+            font-weight:400;
+            color:rgba(75,75,75,1);
+            line-height:16px;
+            border-bottom: 1px solid #EEEEEE;
+          }
+          .open-box{
+            padding: 4px 0 4px 12px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            .open-text{
+              height:16px;
+              font-size:11px;
+              font-family:PingFangSC-Regular,PingFang SC;
+              font-weight:400;
+              color:rgba(75,75,75,1);
+              line-height:16px;
+            }
+            .open-icon{
+              margin-left: 4px;
+              width: 11px;
+              height: 11px;
+            }
+          }
+        }
+        .other-top{
+          padding: 12px;
+          background:rgba(240,255,239,1);
         }
         .box-name{
           height:20px;

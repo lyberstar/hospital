@@ -44,6 +44,7 @@ export default {
       popShow: false,
       price: 0,
       isActive: false,
+      info: '',
       checkList: [
         {
           name: '一般检查',
@@ -96,6 +97,9 @@ export default {
   components: {
   },
   created () {
+    console.log('status:', this.$route.params.status)
+    let info = localStorage.getItem('USER')
+    this.info = JSON.parse(info)
     this.getDataListw()
   },
   computed: {
@@ -107,18 +111,23 @@ export default {
     }
   },
   mounted () {
-    console.log('status:', this.$route.params.status)
   },
   methods: {
     getDataListw () {
       this.isActive = true
+      console.log('this.info:', this.info)
+      this.is_adjus = this.$route.params.is_adjus || false
       let that = this
       axios({
         method: 'get',
         baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
         url: 'examined/RecommendedPackages',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
-        data: {}
+        params: {
+          pregnant: this.info.pregnant,
+          profession: this.info.profession === '非职业' ? 0 : 1,
+          is_adjus: this.is_adjus
+        }
       }).then(function (res) {
         that.isActive = false
         that.checkList = res.data.data.list

@@ -82,7 +82,7 @@ export default {
           if (res.data.data) {
             that.$router.push({ name: 'code', params: { idCard: that.idcard, phone: number } })
           } else {
-            this.$toast(res.data.msg)
+            that.$toast(res.data.msg)
           }
         }).catch(function (err) {
           that.isActive = false

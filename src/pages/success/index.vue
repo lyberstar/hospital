@@ -179,7 +179,7 @@ export default {
   }
   .body-box{
     display: flex;
-    flex: 1;
+    flex-direction: column;
     background:rgba(255,255,255,1);
     border-radius:8px 8px 0px 0px;
     width: 100%;
@@ -189,6 +189,9 @@ export default {
     position: relative;
     .content-box{
       padding: 24px 24px 16px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
       .need-confirm-box{
         padding: 15px 16px;
         box-sizing: border-box;

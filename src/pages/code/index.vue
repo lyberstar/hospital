@@ -20,7 +20,7 @@
           :ref="`ref${index}`"
           class="input"
           v-model="item.value"
-          type="text"
+          type="number"
           oninput="value=value.replace(/[^\d]/g,'')"
           @input="onInput(index)"
           @keyup.delete="onDelete(index)"
@@ -131,6 +131,8 @@ export default {
         if (res.data.data.ptoken) {
           localStorage.setItem('LOGIN_TOKEN', res.data.data.ptoken)
           that.popShow = true
+        } else {
+          this.$toast(res.data.msg)
         }
       }).catch(function (err) {
         that.isActive = false
@@ -163,6 +165,8 @@ export default {
           // 成功了
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
           that.$router.push({ name: 'main' })
+        } else {
+          that.$toast(res.data.msg)
         }
       }).catch(function (err) {
         that.isActive = false
@@ -197,7 +201,7 @@ export default {
       }).then(function (res) {
         that.isActive = false
         if (res.data.data) {
-          that.$router.push({ name: 'code', params: { idCard: that.idcard, phone: number } })
+          that.$router.push({ name: 'code', params: { idCard: that.idcard, phone: that.phone } })
         } else {
           that.$toast(res.data.msg)
         }

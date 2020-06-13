@@ -104,6 +104,9 @@ export default {
         data: {}
       }).then(function (res) {
         that.isActive = false
+        if (res.data.msg === '没有提交过审核') {
+          that.$router.replace({ name: 'main' })
+        }
         if (res.data.data.status === 2) {
           that.isPassed = false
         } else {
@@ -123,8 +126,11 @@ export default {
       }
     },
     forOthers () {
-      this.isPassed = false
-      this.step = 2
+      console.log('forothers')
+      localStorage.removeItem('LOGIN_TOKEN')
+      localStorage.removeItem('USER')
+      localStorage.removeItem('JWT_TOKEN')
+      this.$router.push({ name: 'home', params: { reload: true } })
     },
     inputChange (e) {
       this.idNum = e.target.value
