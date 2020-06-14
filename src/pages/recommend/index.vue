@@ -11,6 +11,7 @@
       </div>
       <div class="top-content">{{info.age}}岁 {{info.sex}} {{info.pregnantString === '非备孕' ? '非备孕期/孕期' : '备孕期/孕期'}}</div>
     </div>
+    <div class="green-back"></div>
     <!-- 主体部分 -->
     <div class="body-box">
       <div class="body-title">推荐套餐</div>
@@ -101,7 +102,6 @@ export default {
     }
   },
   mounted () {
-    console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:', this.$route.params.checkStatus)
     if (this.$route.params.checkStatus) {
       this.timeBox = true
       this.getCheckData()
@@ -163,9 +163,17 @@ export default {
         data: {}
       }).then(function (res) {
         that.isActive = false
-        that.leftTime = res.data.data.time_end
-        if (res.data.data.time_end > 0) {
-          that.countTime(res.data.data.time_end)
+        if (res.data.status === '200') {
+          that.leftTime = res.data.data.time_end
+          if (res.data.data.time_end > 0) {
+            that.countTime(res.data.data.time_end)
+          }
+        } else {
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
         }
       }).catch(function (err) {
         that.isActive = false
@@ -274,10 +282,17 @@ export default {
 .overflowauto{
   overflow: auto;
 }
+.green-back{
+  background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
+  position: absolute;
+  width: 100%;
+  height: 150px;
+  top: 0;
+}
 .body-contain{
   width: 100%;
   height: 100%;
-  background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
+  background: #ffffff;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -287,6 +302,7 @@ export default {
     right: 24px;
     width: 113px;
     height: 116px;
+    z-index: 2;
   }
   .top-box{
     display: flex;

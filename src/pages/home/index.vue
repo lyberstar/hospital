@@ -55,30 +55,23 @@ export default {
   components: {
   },
   created () {
+    if (this.$route.params.reload) {
+      return false
+    }
     if (localStorage.getItem('LOGIN_TOKEN') && localStorage.getItem('USER')) {
       this.$router.replace({ name: 'login-main' })
     }
   },
-  activated () {
-    console.log('this.$route.params.reload:', this.$route.params.reload)
-    if (this.$route.params.reload) {
-      console.log('history1:', history)
-      let len = history.length
-      history.go(-(len - 2))
-      console.log('history2:', history)
-    }
-  },
+  // activated () {
+  //   console.log('this.$route.params.reload:', this.$route.params.reload)
+  //   if (this.$route.params.reload) {
+  //     console.log('history1:', history)
+  //     let len = history.length
+  //     history.go(-(len - 2))
+  //     console.log('history2:', history)
+  //   }
+  // },
   watch: {
-    // loginPhone (newValue, oldValue) {
-    //   newValue = newValue.replace(/\s+/g, '')
-    //   if (newValue.length > 6 && newValue.length < 13) {
-    //     newValue = newValue.replace(/^(\d{6})/g, '$1 ')
-    //   } else if (newValue.length >= 13 && newValue.length < 19) {
-    //     newValue = newValue.replace(/^(\d{6})(\d{7})/g, '$1 $2 ')
-    //   }
-    //   this.loginPhone = newValue
-    //   return newValue
-    // }
   },
   computed: {
     popTitle () {
