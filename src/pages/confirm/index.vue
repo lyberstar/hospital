@@ -58,8 +58,8 @@
       <div class="list-contain-out" v-if="nowIndex === 1">
         <div class="list-contain-must">
           <div class="box-contain" v-for="(items, idx) in mustList" :key="idx">
-            <div class="box-name">{{items.intro}}</div>
-            <div class="box-content">{{items.mean}}</div>
+            <div class="box-name">{{items.name}}</div>
+            <div class="box-content">{{items.intro}}</div>
             <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
           </div>
         </div>
