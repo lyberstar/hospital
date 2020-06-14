@@ -367,8 +367,6 @@ export default {
     }
     .box-contain{
       width: 100%;
-      display: flex;
-      flex-direction: column;
       padding: 12px;
       box-sizing: border-box;
       background:rgba(240,255,239,1);
