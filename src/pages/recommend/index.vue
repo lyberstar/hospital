@@ -20,6 +20,7 @@
         <div class="box-content">{{items.intro}}</div>
         <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
       </div>
+      <div class="ios-box" v-if="isIOS"></div>
     </div>
     <!-- 弹窗 -->
     <div class="pop-contain" @touchmove.prevent v-if="showChangeCheck">
@@ -82,7 +83,8 @@ export default {
       showChangeCheck: false,
       step: 2,
       leftContent: '',
-      checkList: []
+      checkList: [],
+      isIOS: false
     }
   },
   components: {
@@ -92,6 +94,11 @@ export default {
     let info = localStorage.getItem('USER')
     this.info = JSON.parse(info)
     this.getDataListw()
+    var u = navigator.userAgent
+    console.log('navigator.userAgent:', u)
+    if (u.indexOf('iPhone') > -1 || u.indexOf('iOS') > -1) {
+      this.isIOS = true
+    }
   },
   computed: {
     popTitle () {
@@ -357,6 +364,10 @@ export default {
     padding: 24px 16px 78px;
     box-sizing: border-box;
     z-index: 2;
+    .ios-box{
+      width: 100%;
+      height: 78px;
+    }
     .body-title{
       height:22px;
       font-size:16px;
