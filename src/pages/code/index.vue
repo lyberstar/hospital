@@ -15,19 +15,13 @@
         <div @click="getMobileCode" :class="wait_timer > 0 ? 'getcode-small' : 'getcode-big'">{{ getMobileCodeText() }}</div>
       </div>
       <div class="digit-wrapper">
-        <input v-for="(item,index) in digits"
-          :key="index"
-          :ref="`ref${index}`"
-          class="input"
-          v-model="item.value"
-          type="number"
-          oninput="if(value.length > 1)value = value.slice(0, 1)"
-          @input="onInput(index)"
-          @keyup.delete="onDelete(index)"
-          maxlength="1" />
+        <input class="input-box" @input="inputChange" v-model="loginPhone" maxlength="4" />
+        <div class="border"></div>
       </div>
       <button class="next-btn" @click="showPop">下一步</button>
-      <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      <div class="bottom-icon-box">
+        <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      </div>
     </div>
     <!-- 弹窗 -->
     <div class="pop-contain" v-if="popShow">
@@ -78,7 +72,8 @@ export default {
       disabled: true,
       pregnant: '',
       profession: '',
-      isActive: false
+      isActive: false,
+      idNum: ''
     }
   },
   components: {
@@ -109,13 +104,12 @@ export default {
     this.getMobileCode()
   },
   methods: {
+    inputChange (e) {
+      this.idNum = e.target.value
+    },
     showPop () {
       this.isActive = true
-      let codeTemp = ''
       let that = this
-      for (let i = 0; i < this.digits.length; i++) {
-        codeTemp += this.digits[i].value
-      }
       axios({
         method: 'post',
         baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
@@ -123,7 +117,7 @@ export default {
         headers: { 'token': localStorage.getItem('JWT_TOKEN') },
         data: {
           card: this.idCard,
-          code: codeTemp,
+          code: this.idNum,
           phone: this.phone
         }
       }).then(function (res) {
@@ -278,7 +272,7 @@ export default {
       height:33px;
       font-size:24px;
       font-family:Alibaba-PuHuiTi-H,Alibaba-PuHuiTi;
-      font-weight:normal;
+      font-weight:700;
       color:rgba(255,255,255,1);
       line-height:33px;
       z-index: 2;
@@ -335,24 +329,28 @@ export default {
       }
     }
     .digit-wrapper{
-      display: flex;
-      flex-direction: row;
-      margin-top: 44px;
-      padding: 0 40px;
+      margin-top: 8px;
       justify-content: space-between;
-      .input {
+      .input-box{
         display: flex;
-        width: 39px;
-        height: 40px;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        border: 0!important;
         font-size:28px;
         font-family:PingFangSC-Regular,PingFang SC;
         font-weight:400;
         color:rgba(18,178,111,1);
-        line-height:40px;
+        line-height:72px;
+        letter-spacing:1px;
+        height: 72px;
         text-align: center;
-        outline: none; // 去除选中状态边框
-        border-radius:4px;
-        border:1px solid rgba(238,238,238,1);
+        letter-spacing:32px;
+        margin-left: 16px;
+      }
+      .border{
+        height:1px;
+        background:rgba(238,238,238,1);
       }
     }
     .next-btn{
@@ -368,14 +366,19 @@ export default {
       color:rgba(255,255,255,1);
       line-height:16px;
       border: 0!important;
-      margin-top: 64px;
+      margin-top: 56px;
     }
-    .bottom-icon{
+    .bottom-icon-box{
+      width: 100%;
       position: absolute;
       bottom: 33px;
-      left: 49px;
-      width: 278px;
-      height: 23px;
+      display: flex;
+      justify-content: center;
+      .bottom-icon{
+        width: 278px;
+        height: 23px;
+        margin-right: 24px;
+      }
     }
   }
   .pop-contain{

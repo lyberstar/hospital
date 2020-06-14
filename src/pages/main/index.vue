@@ -32,7 +32,9 @@
         <img class="back-heart" src="../../assets/images/ic-blue.png" />
         <img class="right-arrow" src="../../assets/images/right-arrow.png" />
       </div>
-      <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      <div class="bottom-icon-box">
+        <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      </div>
     </div>
     <!-- 弹窗 -->
     <div class="pop-contain" v-if="showChangeCheck">
@@ -276,12 +278,17 @@ export default {
         right: 32px;
       }
     }
-    .bottom-icon{
+    .bottom-icon-box{
+      width: 100%;
       position: absolute;
       bottom: 33px;
-      left: 49px;
-      width: 278px;
-      height: 23px;
+      display: flex;
+      justify-content: center;
+      .bottom-icon{
+        width: 278px;
+        height: 23px;
+        margin-right: 24px;
+      }
     }
     .green-box{
       background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);

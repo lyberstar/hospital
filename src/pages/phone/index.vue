@@ -14,7 +14,9 @@
       <input class="input-box" placeholder="请输入手机号" @input="inputChange" v-model="loginPhone" />
       <div class="border"></div>
       <button class="next-btn" @click="turnToMain">下一步</button>
-      <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      <div class="bottom-icon-box">
+        <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      </div>
     </div>
   </div>
 </template>
@@ -119,7 +121,7 @@ export default {
       height:33px;
       font-size:24px;
       font-family:Alibaba-PuHuiTi-H,Alibaba-PuHuiTi;
-      font-weight:normal;
+      font-weight:700;
       color:rgba(255,255,255,1);
       line-height:33px;
       z-index: 2;
@@ -194,12 +196,17 @@ export default {
       border: 0!important;
       margin-top: 64px;
     }
-    .bottom-icon{
+    .bottom-icon-box{
+      width: 100%;
       position: absolute;
       bottom: 33px;
-      left: 49px;
-      width: 278px;
-      height: 23px;
+      display: flex;
+      justify-content: center;
+      .bottom-icon{
+        width: 278px;
+        height: 23px;
+        margin-right: 24px;
+      }
     }
   }
   .pop-contain{

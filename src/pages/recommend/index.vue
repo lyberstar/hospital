@@ -1,5 +1,5 @@
 <template>
-  <div class="body-contain">
+  <div class="body-contain" :class="showChangeCheck ? 'overflowhidden' : 'overflowauto'">
     <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 顶部背景图 -->
     <img class="back-image" src="../../assets/images/ic-back.png" />
@@ -15,13 +15,37 @@
     <div class="body-box">
       <div class="body-title">推荐套餐</div>
       <div class="box-contain" v-for="(items, idx) in checkList" :key="idx">
-        <div class="box-name">{{items.intro}}</div>
-        <div class="box-content">{{items.mean}}</div>
+        <div class="box-name">{{items.name}}</div>
+        <div class="box-content">{{items.intro}}</div>
         <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
       </div>
     </div>
+    <!-- 弹窗 -->
+    <div class="pop-contain" @touchmove.prevent v-if="showChangeCheck">
+      <div class="back-hover" @click="hideCheck"></div>
+      <div class="pop-body" v-if="step === 2">
+        <div class="pop-title-box">
+          <div class="pop-title">您是否处于备孕期，或正在孕期？</div>
+          <div class="pop-content">无论男女，如果您未来3个月有怀孕的打算，或正在孕期我们将为您去掉带有强辐射性等可能会影响胎儿的项目。</div>
+        </div>
+        <div class="button-box">
+          <button class="color-btn" @click="recodeStatus(1)">最近三个月有怀孕打算或正在孕期</button>
+          <div class="no-color" @click="recodeStatus(0)">不处于孕期，且最近三个月没有怀孕打算</div>
+        </div>
+      </div>
+      <div class="pop-body" v-if="step === 3">
+        <div class="pop-title-box">
+          <div class="pop-title">您是否是职业病工种？</div>
+          <div class="pop-content">是否是职业病工种将影响您的检查项目种类。</div>
+        </div>
+        <div class="button-box-next">
+          <button class="color-btn-next" @click="recodePro(1)">是职业病工种</button>
+          <button class="no-color-next" @click="recodePro(0)">不是职业病工种</button>
+        </div>
+      </div>
+    </div>
     <!-- 底部固定 -->
-    <div class="bottom-box">
+    <div class="bottom-box" v-if="!timeBox">
       <div class="bottom-left">
         <div class="price-box">
           <div class="rmb">¥</div>
@@ -30,6 +54,13 @@
         <div class="price-content">到院自费金额</div>
       </div>
       <button class="confirm-btn" @click="confirm">确认选择</button>
+    </div>
+    <div class="bottom-box" v-if="timeBox && leftTime > 0">
+      <div class="time-bottom-left">
+        <div class="time-price-box">{{leftContent}}</div>
+        <div class="time-price-content">如需调整，请在倒计时结束前戳右方</div>
+      </div>
+      <button class="confirm-btn" @click="changeCheck">去调整</button>
     </div>
   </div>
 </template>
@@ -45,53 +76,12 @@ export default {
       price: 0,
       isActive: false,
       info: '',
-      checkList: [
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        },
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        },
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        },
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        },
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        },
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        },
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        },
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        },
-        {
-          name: '一般检查',
-          content: '身高、体重、血压和体重指数',
-          checked: true
-        }
-      ]
+      leftTime: '',
+      timeBox: false,
+      showChangeCheck: false,
+      step: 2,
+      leftContent: '',
+      checkList: []
     }
   },
   components: {
@@ -111,8 +101,98 @@ export default {
     }
   },
   mounted () {
+    console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:', this.$route.params.checkStatus)
+    if (this.$route.params.checkStatus) {
+      this.timeBox = true
+      this.getCheckData()
+    }
   },
   methods: {
+    hideCheck () {
+      this.showChangeCheck = false
+    },
+    changeCheck () {
+      this.showChangeCheck = true
+    },
+    recodeStatus (idx) {
+      this.pregnant = idx
+      this.step = 3
+    },
+    recodePro (idx) {
+      this.profession = idx
+      this.isActive = true
+      // 请求接口
+      let that = this
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        url: 'examined/getUserInfo',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {
+          pregnant: this.pregnant,
+          profession: this.profession
+        }
+      }).then(function (res) {
+        that.isActive = false
+        that.showChangeCheck = false
+        that.timeBox = false
+        if (res.data.status === '200') {
+          // 成功了
+          localStorage.setItem('USER', JSON.stringify(res.data.data.user))
+          that.$router.push({ name: 'main', params: { is_adjus: true } })
+        } else {
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
+        }
+      }).catch(function (err) {
+        that.isActive = false
+        console.log('请求失败', err)
+      })
+    },
+    getCheckData () {
+      let that = this
+      that.isActive = true
+      axios({
+        method: 'get',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        url: 'examined/getUserCategory',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {}
+      }).then(function (res) {
+        that.isActive = false
+        that.leftTime = res.data.data.time_end
+        if (res.data.data.time_end > 0) {
+          that.countTime(res.data.data.time_end)
+        }
+      }).catch(function (err) {
+        that.isActive = false
+        console.log('请求失败', err)
+      })
+    },
+    countTime (differTime) {
+      let that = this
+      var h, m, s
+      if (differTime >= 0) {
+        h = Math.floor(differTime / 60 / 60)
+        m = Math.floor(differTime / 60 % 60)
+        s = Math.floor(differTime % 60)
+        h = h < 10 ? ('0' + h) : h
+        m = m < 10 ? ('0' + m) : m
+        s = s < 10 ? ('0' + s) : s
+        var timeDom = h + ':' + m + ':' + s
+        this.leftContent = timeDom
+        // 递归调用函数所以是延时器不是定时器
+        setTimeout(function () {
+          differTime -= 1
+          that.countTime(differTime)
+        }, 1000)
+      } else {
+        this.leftContent = '00:00:00'
+      }
+    },
     getDataListw () {
       this.isActive = true
       console.log('this.info:', this.info)
@@ -188,6 +268,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.overflowhidden{
+  overflow: hidden;
+}
+.overflowauto{
+  overflow: auto;
+}
 .body-contain{
   width: 100%;
   height: 100%;
@@ -360,6 +446,28 @@ export default {
         margin-bottom: -4px;
       }
     }
+    .time-bottom-left{
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+      .time-price-box{
+        height:18px;
+        font-size:18px;
+        font-family:PingFangSC-Semibold;
+        font-weight:600;
+        color:rgba(42,42,42,1);
+        line-height:18px;
+      }
+      .time-price-content{
+        margin-top: 2px;
+        height:16px;
+        font-size:11px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(75,75,75,1);
+        line-height:16px;
+      }
+    }
     .confirm-btn{
       height:32px;
       background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
@@ -374,6 +482,124 @@ export default {
       font-weight:400;
       color:rgba(255,255,255,1);
       line-height:20px;
+    }
+  }
+  .pop-contain{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    .back-hover{
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.5);
+    }
+    .pop-body{
+      width:100%;
+      height:366px;
+      background:rgba(255,255,255,1);
+      border-radius:8px 8px 0px 0px;
+      position: absolute;
+      bottom: 0;
+      padding: 32px 24px 72px;
+      box-sizing: border-box;
+      z-index: 11;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .pop-title-box{
+        display: flex;
+        flex-direction: column;
+        .pop-title{
+          font-size:18px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(42,42,42,1);
+          line-height:26px;
+        }
+        .pop-content{
+          margin-top: 16px;
+          font-size:14px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(91,91,91,1);
+          line-height:20px;
+          .green{
+            float: left;
+            color: #17B56A;
+            margin: 0 4px;
+          }
+          .nomal{
+            float: left;
+          }
+        }
+      }
+      .button-box{
+        display: flex;
+        flex-direction: column;
+        .color-btn{
+          width: 100%;
+          height:40px;
+          background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
+          border-radius:4px;
+          font-size:16px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(255,255,255,1);
+          line-height:16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 0!important;
+        }
+        .no-color{
+          margin-top: 16px;
+          width: 100%;
+          text-align: center;
+          font-size:14px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(18,178,111,1);
+          line-height:20px;
+          height:20px;
+        }
+      }
+      .button-box-next{
+        display: flex;
+        justify-content: space-between;
+        .color-btn-next{
+          width:153px;
+          height:40px;
+          background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
+          border-radius:4px;
+          font-size:16px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(255,255,255,1);
+          line-height:16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 0!important;
+        }
+        .no-color-next{
+          width:153px;
+          height:40px;
+          border-radius:4px;
+          border:1px solid rgba(26,180,116,1);
+          font-size:16px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(26,180,116,1);
+          line-height:16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #ffffff;
+        }
+      }
     }
   }
 }

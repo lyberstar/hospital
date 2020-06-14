@@ -25,7 +25,9 @@
         <div class="turn-text">为他人选择体检项目</div>
         <img class="turn-icon" src="../../assets/images/black_arrow.png" />
       </div>
-      <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      <div class="bottom-icon-box">
+        <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      </div>
     </div>
     <!-- 弹窗 -->
     <div class="pop-contain" v-if="!isPassed">
@@ -126,7 +128,7 @@ export default {
       if (this.planType === '自选') {
         this.$router.push({ name: 'confirm', params: { checkStatus: 'formCheck' } })
       } else {
-        this.$router.push({ name: 'recommend' })
+        this.$router.push({ name: 'recommend', params: { checkStatus: 'formCheck' } })
       }
     },
     forOthers () {
@@ -335,12 +337,17 @@ export default {
         height: 14px;
       }
     }
-    .bottom-icon{
+    .bottom-icon-box{
+      width: 100%;
       position: absolute;
       bottom: 33px;
-      left: 49px;
-      width: 278px;
-      height: 23px;
+      display: flex;
+      justify-content: center;
+      .bottom-icon{
+        width: 278px;
+        height: 23px;
+        margin-right: 24px;
+      }
     }
     .green-box{
       background:linear-gradient(135deg,rgba(66,195,237,1) 0%,rgba(3,122,251,1) 100%);

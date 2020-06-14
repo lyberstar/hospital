@@ -1,5 +1,5 @@
 <template>
-  <div class="body-contain">
+  <div class="body-contain" :class="showChangeCheck ? 'overflowhidden' : 'overflowauto'">
     <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 顶部背景图 -->
     <img class="back-image" src="../../assets/images/ic-back.png" />
@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="list-contain-out" v-if="nowIndex === 0">
-        <div class="list-contain">
+        <div class="list-contain" v-if="selfList.length > 0">
           <div class="other-box" v-for="(items, idx) in selfList" :key="idx">
             <img class="corner-tag" src="../../assets/images/ic-done-corner.png" />
             <div class="other-title" :class="items.checked ? 'checkedtitle' : 'nocheckedtitle'">{{items.name}}</div>
@@ -35,7 +35,7 @@
             </div>
           </div>
         </div>
-        <div class="compute-box">
+        <div class="compute-box" v-if="selfList.length > 0">
           <div class="compute-item">
             <div class="compute-title">项目总额:</div>
             <div class="compute-price">￥{{totalPrice}}</div>
@@ -48,6 +48,10 @@
             <div class="compute-title">超出补贴部分9折:</div>
             <div class="compute-price">-￥{{ninePrice}}</div>
           </div>
+        </div>
+        <div class="empty-box" v-if="selfList.length === 0">
+          <img class="empty-icon" src="../../assets/images/empty.png" />
+          <div class="empty-content">还没有自选项目...</div>
         </div>
       </div>
       <div class="list-contain-out" v-if="nowIndex === 1">
@@ -62,7 +66,7 @@
     </div>
     <!-- 弹窗 -->
     <div class="pop-contain" @touchmove.prevent v-if="showChangeCheck">
-      <div class="back-hover"></div>
+      <div class="back-hover" @click="hideCheck"></div>
       <div class="pop-body" v-if="step === 2">
         <div class="pop-title-box">
           <div class="pop-title">您是否处于备孕期，或正在孕期？</div>
@@ -169,6 +173,9 @@ export default {
     }
   },
   methods: {
+    hideCheck () {
+      this.showChangeCheck = false
+    },
     changeCheck () {
       this.showChangeCheck = true
     },
@@ -329,6 +336,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.overflowhidden{
+  overflow: hidden;
+}
+.overflowauto{
+  overflow: auto;
+}
 .body-contain{
   width: 100%;
   height: 100%;
@@ -398,9 +411,11 @@ export default {
     .tab-contain{
       display: flex;
       justify-content: space-between;
+      height: 31px;
       .tab-box{
         width: 164px;
         align-items: center;
+        height: 31px;
         .tab-content{
           width: 100%;
           text-align: center;
@@ -519,6 +534,26 @@ export default {
             color:rgba(42,42,42,1);
             line-height:17px;
           }
+        }
+      }
+      .empty-box{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .empty-icon{
+          width: 250px;
+          height: 160px;
+          margin-top: 79px;
+        }
+        .empty-content{
+          margin-top: 8px;
+          height:22px;
+          font-size:16px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(75,75,75,1);
+          line-height:22px;
         }
       }
       .list-contain-must{

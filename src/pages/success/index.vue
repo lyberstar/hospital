@@ -64,7 +64,9 @@
           </div>
         </div>
       </div>
-      <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      <div class="bottom-icon-box">
+        <img class="bottom-icon" src="../../assets/images/logo-group.png" />
+      </div>
     </div>
   </div>
 </template>
@@ -276,12 +278,17 @@ export default {
     .big-border{
       border-bottom: 8px solid #F2F2F2;
     }
-    .bottom-icon{
+    .bottom-icon-box{
+      width: 100%;
       position: absolute;
-      bottom: 48px;
-      left: 49px;
-      width: 278px;
-      height: 23px;
+      bottom: 33px;
+      display: flex;
+      justify-content: center;
+      .bottom-icon{
+        width: 278px;
+        height: 23px;
+        margin-right: 24px;
+      }
     }
   }
 }
