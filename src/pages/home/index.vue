@@ -237,14 +237,13 @@ export default {
       height: 72px;
     }
     .input-box::-webkit-input-placeholder {
-      display: flex;
-      align-items: center;
       font-size:14px;
       font-family:PingFangSC-Regular,PingFang SC;
       font-weight:400;
       color:rgba(152,152,152,1);
       line-height:20px;
       height: 72px;
+      padding-top: 26px;
     }
     .border{
       height:1px;
