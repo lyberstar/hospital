@@ -356,12 +356,12 @@ export default {
     }
   }
   .body-box{
-    display: flex;
-    flex: 1;
+    // display: flex;
+    // flex: 1;
     background:rgba(255,255,255,1);
     border-radius:8px 8px 0px 0px;
     width: 100%;
-    flex-direction: column;
+    // flex-direction: column;
     padding: 24px 16px 78px;
     box-sizing: border-box;
     z-index: 2;
