@@ -132,7 +132,11 @@ export default {
           localStorage.setItem('LOGIN_TOKEN', res.data.data.ptoken)
           that.popShow = true
         } else {
-          this.$toast(res.data.msg)
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
         }
       }).catch(function (err) {
         that.isActive = false
@@ -166,7 +170,11 @@ export default {
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
           that.$router.push({ name: 'main' })
         } else {
-          that.$toast(res.data.msg)
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
         }
       }).catch(function (err) {
         that.isActive = false

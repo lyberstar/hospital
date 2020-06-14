@@ -142,7 +142,11 @@ export default {
           localStorage.removeItem('JWT_TOKEN')
           that.$router.push({ name: 'home', params: { reload: true } })
         } else {
-          that.$toast(res.data.msg)
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
         }
       }).catch(function (err) {
         that.isActive = false

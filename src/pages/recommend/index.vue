@@ -130,7 +130,15 @@ export default {
         }
       }).then(function (res) {
         that.isActive = false
-        that.checkList = res.data.data.list
+        if (res.data.status === '200') {
+          that.checkList = res.data.data.list
+        } else {
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
+        }
       }).catch(function (err) {
         that.isActive = false
         console.log('请求失败', err)
@@ -162,6 +170,12 @@ export default {
         that.isActive = false
         if (res.data.status === '200') {
           that.$router.push({ name: 'success' })
+        } else {
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
         }
       }).catch(function (err) {
         that.isActive = false

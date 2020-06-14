@@ -191,13 +191,19 @@ export default {
           profession: this.profession
         }
       }).then(function (res) {
+        that.isActive = false
         if (res.data.status === '200') {
           // 成功了
-          that.isActive = false
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
           that.$router.push({ name: 'main', params: { is_adjus: true } })
           that.showChangeCheck = false
           that.timeBox = false
+        } else {
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
         }
       }).catch(function (err) {
         that.isActive = false

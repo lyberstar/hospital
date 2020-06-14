@@ -142,7 +142,11 @@ export default {
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
           that.$router.go(0)
         } else {
-          that.$toast(res.data.msg)
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
         }
       }).catch(function (err) {
         that.isActive = true
