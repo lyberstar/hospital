@@ -143,6 +143,9 @@ export default {
           that.$router.push({ name: 'home', params: { reload: true } })
         } else {
           if (res.data.status === '201') {
+            localStorage.removeItem('LOGIN_TOKEN')
+            localStorage.removeItem('USER')
+            localStorage.removeItem('JWT_TOKEN')
             that.$router.push({ name: 'home', params: { reload: true } })
           } else {
             that.$toast(res.data.msg)
