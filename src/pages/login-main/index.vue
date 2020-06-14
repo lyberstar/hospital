@@ -126,11 +126,28 @@ export default {
       }
     },
     forOthers () {
-      console.log('forothers')
-      localStorage.removeItem('LOGIN_TOKEN')
-      localStorage.removeItem('USER')
-      localStorage.removeItem('JWT_TOKEN')
-      this.$router.push({ name: 'home', params: { reload: true } })
+      let that = this
+      that.isActive = true
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        url: 'examined/loginOut',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {}
+      }).then(function (res) {
+        that.isActive = false
+        if (res.data.msg === '退出登录成功') {
+          localStorage.removeItem('LOGIN_TOKEN')
+          localStorage.removeItem('USER')
+          localStorage.removeItem('JWT_TOKEN')
+          that.$router.push({ name: 'home', params: { reload: true } })
+        } else {
+          that.$toast(res.data.msg)
+        }
+      }).catch(function (err) {
+        that.isActive = false
+        console.log('请求失败', err)
+      })
     },
     inputChange (e) {
       this.idNum = e.target.value

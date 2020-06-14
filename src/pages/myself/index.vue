@@ -118,47 +118,8 @@ export default {
             {
               name: '一般检查',
               content: '身高、体重、血压和体重指数',
-              checked: true
-            },
-            {
-              name: '一般检查',
-              content: '身高、体重、血压和体重指数',
-              checked: true
-            },
-            {
-              name: '一般检查',
-              content: '身高、体重、血压和体重指数',
-              checked: true
-            },
-            {
-              name: '一般检查',
-              content: '身高、体重、血压和体重指数',
-              checked: true
-            },
-            {
-              name: '一般检查',
-              content: '身高、体重、血压和体重指数',
-              checked: true
-            },
-            {
-              name: '一般检查',
-              content: '身高、体重、血压和体重指数',
-              checked: true
-            },
-            {
-              name: '一般检查',
-              content: '身高、体重、血压和体重指数',
-              checked: true
-            },
-            {
-              name: '一般检查',
-              content: '身高、体重、血压和体重指数',
-              checked: true
-            },
-            {
-              name: '一般检查',
-              content: '身高、体重、血压和体重指数',
-              checked: true
+              checked: true,
+              price: 0
             }
           ]
         },
@@ -537,6 +498,11 @@ export default {
       popShow: false,
       isActive: false,
       is_adjus: false,
+      finalPrice: 0,
+      cutPrice: 0,
+      totalPrice: 0,
+      ninePrice: 0,
+      totalCut: 0,
       topPriceNum: 380 // 最高免减
     }
   },
@@ -547,63 +513,32 @@ export default {
     this.is_adjus = this.$route.params.is_adjus || false
     this.getDataList()
   },
+  watch: {
+  },
   computed: {
-    finalPrice () {
-      let price = 0
-      for (let i = 0; i < this.sideList.length; i++) {
-        for (let j = 0; j < this.sideList[i].list.length; j++) {
-          if (this.sideList[i].list[j].checked) {
-            price += this.sideList[i].list[j].price || 0
-          }
-        }
-      }
-      return (price - this.topPriceNum) * 0.9 > 0 ? ((price - this.topPriceNum) * 0.9).toFixed(1) : 0
-    },
     topPrice () {
       return `您的公司补贴上限为 ¥${this.topPriceNum}，超出部分`
-    },
-    cutPrice () {
-      let price = 0
-      for (let i = 0; i < this.sideList.length; i++) {
-        for (let j = 0; j < this.sideList[i].list.length; j++) {
-          if (this.sideList[i].list[j].checked) {
-            price += this.sideList[i].list[j].price || 0
-          }
-        }
-      }
-      price = price > this.topPriceNum ? this.topPriceNum : price
-      return price
-    },
-    totalPrice () {
-      let price = 0
-      for (let i = 0; i < this.sideList.length; i++) {
-        for (let j = 0; j < this.sideList[i].list.length; j++) {
-          if (this.sideList[i].list[j].checked) {
-            price += this.sideList[i].list[j].price || 0
-          }
-        }
-      }
-      console.log('我变了：', price)
-      return price
-    },
-    ninePrice () {
-      let price = 0
-      for (let i = 0; i < this.sideList.length; i++) {
-        for (let j = 0; j < this.sideList[i].list.length; j++) {
-          if (this.sideList[i].list[j].checked) {
-            price += this.sideList[i].list[j].price || 0
-          }
-        }
-      }
-      return (price - this.topPriceNum) * 0.1 > 0 ? ((price - this.topPriceNum) * 0.1).toFixed(1) : 0
-    },
-    totalCut () {
-      return (parseFloat(this.cutPrice) + parseFloat(this.ninePrice)).toFixed(1)
     }
   },
   mounted () {
   },
   methods: {
+    setNewPrice () {
+      // 算价格
+      let totalPrice = 0
+      this.sideList.forEach(function (data) {
+        data.list.forEach(function (list) {
+          if (list.checked) {
+            totalPrice += parseFloat(list.price) || 0
+          }
+        })
+      })
+      this.finalPrice = (totalPrice - this.topPriceNum) * 0.9 > 0 ? ((totalPrice - this.topPriceNum) * 0.9).toFixed(1) : 0
+      this.cutPrice = totalPrice > this.topPriceNum ? this.topPriceNum : totalPrice
+      this.totalPrice = totalPrice
+      this.ninePrice = (totalPrice - this.topPriceNum) * 0.1 > 0 ? ((totalPrice - this.topPriceNum) * 0.1).toFixed(1) : 0
+      this.totalCut = (parseFloat(this.cutPrice) + parseFloat(this.ninePrice)).toFixed(1)
+    },
     getDataList () {
       this.isActive = true
       let that = this
@@ -624,21 +559,6 @@ export default {
         that.isActive = false
         console.log('请求失败', err)
       })
-
-      // axios.get('examined/getUserCategory', {
-      //   baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
-      //   headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
-      //   params: {
-      //     is_adjus: that.is_adjus
-      //   }
-      // }).then(function (res) {
-      //   that.isActive = false
-      //   that.topPriceNum = res.data.data.subsidies
-      //   that.downData(res.data.data.list)
-      // }).catch(function (err) {
-      //   that.isActive = false
-      //   console.log('请求失败', err)
-      // })
     },
     downData (data) {
       let dataList = []
@@ -667,6 +587,7 @@ export default {
           this.nowIndex = i
         }
       }
+      this.setNewPrice()
     },
     showPop () {
       this.popShow = true
@@ -692,6 +613,20 @@ export default {
       } else {
         this.sideList[this.nowIndex].chooseNum -= 1
       }
+      // 算价格
+      let totalPrice = 0
+      this.sideList.forEach(function (data) {
+        data.list.forEach(function (list) {
+          if (list.checked) {
+            totalPrice += parseFloat(list.price) || 0
+          }
+        })
+      })
+      this.finalPrice = (totalPrice - this.topPriceNum) * 0.9 > 0 ? ((totalPrice - this.topPriceNum) * 0.9).toFixed(1) : 0
+      this.cutPrice = totalPrice > this.topPriceNum ? this.topPriceNum : totalPrice
+      this.totalPrice = totalPrice
+      this.ninePrice = (totalPrice - this.topPriceNum) * 0.1 > 0 ? ((totalPrice - this.topPriceNum) * 0.1).toFixed(1) : 0
+      this.totalCut = (parseFloat(this.cutPrice) + parseFloat(this.ninePrice)).toFixed(1)
     },
     confirm () {
       // 把选中的提出来传到下一个页面
