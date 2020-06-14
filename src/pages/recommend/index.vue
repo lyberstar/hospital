@@ -361,6 +361,7 @@ export default {
       position: relative;
       overflow: hidden;
       margin-bottom: 12px;
+      height: 63px;
       &:last-child{
         margin-bottom: 78px!important;
       }

@@ -251,6 +251,7 @@ export default {
 .body-contain{
   width: 100%;
   height: 100%;
+  overflow-x: hidden;
   background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
   position: relative;
   display: flex;
