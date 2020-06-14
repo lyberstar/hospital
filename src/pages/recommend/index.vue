@@ -368,7 +368,11 @@ export default {
     }
     .box-contain{
       width: 100%;
-      padding: 12px;
+      height:auto!important;
+      height: 63px;
+      min-height:63px;
+      padding-left: 12px;
+      padding-top: 12px;
       box-sizing: border-box;
       background:rgba(240,255,239,1);
       border-radius:8px;
@@ -376,7 +380,6 @@ export default {
       position: relative;
       overflow: hidden;
       margin-bottom: 12px;
-      height: 63px;
       &:last-child{
         margin-bottom: 78px!important;
       }
