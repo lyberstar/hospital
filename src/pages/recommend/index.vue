@@ -354,7 +354,7 @@ export default {
     border-radius:8px 8px 0px 0px;
     width: 100%;
     flex-direction: column;
-    padding: 24px 16px 0;
+    padding: 24px 16px 78px;
     box-sizing: border-box;
     z-index: 2;
     .body-title{
@@ -380,9 +380,6 @@ export default {
       position: relative;
       overflow: hidden;
       margin-bottom: 12px;
-      &:last-child{
-        margin-bottom: 78px!important;
-      }
       .box-name{
         height:20px;
         font-size:14px;
