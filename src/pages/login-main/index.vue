@@ -89,8 +89,12 @@ export default {
   },
   mounted () {
     console.log('status:', this.$route.params.status)
-    let info = localStorage.getItem('USER')
-    this.info = JSON.parse(info)
+    if (localStorage.getItem('USER')) {
+      let info = localStorage.getItem('USER')
+      this.info = JSON.parse(info)
+    } else {
+      this.$router.push({ name: 'home', params: { reload: true } })
+    }
   },
   methods: {
     getStatusData () {

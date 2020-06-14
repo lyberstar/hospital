@@ -53,7 +53,7 @@ export default {
   components: {
   },
   created () {
-    if (localStorage.getItem('LOGIN_TOKEN')) {
+    if (localStorage.getItem('LOGIN_TOKEN') && localStorage.getItem('USER')) {
       this.$router.replace({ name: 'login-main' })
     }
   },
@@ -225,8 +225,8 @@ export default {
       margin-top: 40px;
     }
     .input-box{
-      // display: flex;
-      // align-items: center;
+      display: flex;
+      align-items: center;
       border: 0!important;
       font-size:28px;
       font-family:PingFangSC-Regular,PingFang SC;
@@ -237,11 +237,14 @@ export default {
       height: 72px;
     }
     .input-box::-webkit-input-placeholder {
+      display: flex;
+      align-items: center;
       font-size:14px;
       font-family:PingFangSC-Regular,PingFang SC;
       font-weight:400;
       color:rgba(152,152,152,1);
       line-height:20px;
+      height: 72px;
     }
     .border{
       height:1px;

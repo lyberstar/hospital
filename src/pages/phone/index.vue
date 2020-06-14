@@ -155,8 +155,8 @@ export default {
       margin-top: 40px;
     }
     .input-box{
-      // display: flex;
-      // align-items: center;
+      display: flex;
+      align-items: center;
       border: 0!important;
       font-size:28px;
       font-family:PingFangSC-Regular,PingFang SC;
@@ -167,6 +167,9 @@ export default {
       height: 72px;
     }
     .input-box::-webkit-input-placeholder {
+      display: flex;
+      align-items: center;
+      height: 72px;
       font-size:14px;
       font-family:PingFangSC-Regular,PingFang SC;
       font-weight:400;
