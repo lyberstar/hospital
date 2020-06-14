@@ -95,9 +95,10 @@ export default {
     this.info = JSON.parse(info)
     this.getDataListw()
     var u = navigator.userAgent
-    console.log('navigator.userAgent:', u)
+    console.log('navigator.userAgent在这里！！！！！！！！！:', u)
     if (u.indexOf('iPhone') > -1 || u.indexOf('iOS') > -1) {
       this.isIOS = true
+      console.log('我是不是ios??????', this.isIOS)
     }
   },
   computed: {
