@@ -4,11 +4,11 @@ import router from './router/index'
 import store from './script/store/index'
 import Toast from './components/toast'
 import VueElementLoading from 'vue-element-loading'
-// import vConsole from '@/assets/js/vconsole.js'
+import vConsole from '@/assets/js/vconsole.js'
 
 Vue.config.productionTip = false
 Vue.use(Toast)
-// Vue.use(vConsole)
+Vue.use(vConsole)
 
 Vue.component('VueElementLoading', VueElementLoading)
 
