@@ -192,12 +192,12 @@ export default {
         }
       }).then(function (res) {
         that.isActive = false
+        that.showChangeCheck = false
+        that.timeBox = false
         if (res.data.status === '200') {
           // 成功了
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
           that.$router.push({ name: 'main', params: { is_adjus: true } })
-          that.showChangeCheck = false
-          that.timeBox = false
         } else {
           if (res.data.status === '201') {
             that.$router.push({ name: 'home', params: { reload: true } })

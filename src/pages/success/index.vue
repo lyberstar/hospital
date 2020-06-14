@@ -7,13 +7,11 @@
       <div class="top-title">
         <div class="name-box">选择成功</div>
       </div>
-      <!-- <div class="top-content" v-if="price > 0">¥ {{price}} 请到医自费</div> -->
       <div class="top-content">等待审核中…</div>
-      <!-- <div class="top-content">体检时间请根据贵公司要求分批前来</div> -->
     </div>
     <!-- 主体部分 -->
     <div class="body-box">
-      <div class="content-box big-border">
+      <div class="content-box big-border content-height">
         <div class="need-confirm-box" v-if="prompt && prompt.intro">
           <div class="need-text">{{prompt.intro}}</div>
           <div class="need-bottom">
@@ -41,7 +39,7 @@
           <div class="item">提前了解医院地理位置和交通情况，避免当日在空腹的情况下费力费神，引起身体不适。</div>
         </div>
       </div>
-      <div class="content-box">
+      <div class="content-box content-height-bot">
         <div class="title-box">
           <img class="title-icon" src="../../assets/images/ic-title.png" />
           <div class="title">体检前常见问题</div>
@@ -141,8 +139,11 @@ export default {
     margin: 0 0 32px 24px;
     padding-top: 32px;
     z-index: 2;
+    height: 89px;
+    box-sizing: border-box;
     .top-title{
       display: flex;
+      height:33px;
       .name-box{
         height:33px;
         font-size:24px;
@@ -150,20 +151,6 @@ export default {
         font-weight:500;
         color:rgba(255,255,255,1);
         line-height:33px;
-      }
-      .tag-box{
-        margin: 6px 0 0 8px;
-        height:16px;
-        background:rgba(255,255,255,1);
-        border-radius:2px;
-        padding: 0 4px;
-        display: flex;
-        align-items: center;
-        font-size:12px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
-        color:rgba(32,186,93,1);
-        line-height:12px;
       }
     }
     .top-content{
@@ -187,6 +174,12 @@ export default {
     box-sizing: border-box;
     z-index: 2;
     position: relative;
+    .content-height{
+      height: 754px;
+    }
+    .content-box-bot{
+      height: 581px;
+    }
     .content-box{
       padding: 24px 24px 16px;
       box-sizing: border-box;
