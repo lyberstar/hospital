@@ -391,7 +391,7 @@ export default {
         }
         .pop-content{
           margin-top: 16px;
-          font-size:14px;
+          font-size:15px;
           font-family:PingFangSC-Regular,PingFang SC;
           font-weight:400;
           color:rgba(91,91,91,1);

@@ -184,7 +184,7 @@ export default {
     .top-title{
       height:33px;
       font-size:24px;
-      font-family:Alibaba-PuHuiTi-H,Alibaba-PuHuiTi;
+      font-family:PingFangSC-Regular;
       font-weight:700;
       color:rgba(255,255,255,1);
       line-height:33px;
@@ -194,7 +194,7 @@ export default {
       margin-top: 2px;
       height:22px;
       font-size:16px;
-      font-family:Alibaba-PuHuiTi-R,Alibaba-PuHuiTi;
+      font-family:PingFangSC-Regular;
       font-weight:normal;
       color:rgba(255,255,255,1);
       line-height:22px;
