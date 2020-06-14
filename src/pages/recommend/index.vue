@@ -288,6 +288,7 @@ export default {
   width: 100%;
   height: 150px;
   top: 0;
+  overflow-x: hidden;
 }
 .body-contain{
   width: 100%;

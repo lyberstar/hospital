@@ -668,6 +668,7 @@ export default {
   background: #ffffff;;
   position: relative;
   display: flex;
+  overflow-x: hidden;
   .sidebar-contain{
     display: flex;
     flex-direction: column;

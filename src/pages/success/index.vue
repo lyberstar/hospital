@@ -11,7 +11,7 @@
     </div>
     <!-- 主体部分 -->
     <div class="body-box">
-      <div class="content-box big-border content-height">
+      <div class="content-box big-border content-height" :class="prompt && prompt.intro ? 'content-height' : 'content-height-none'">
         <div class="need-confirm-box" v-if="prompt && prompt.intro">
           <div class="need-text">{{prompt.intro}}</div>
           <div class="need-bottom">
@@ -176,6 +176,9 @@ export default {
     }
     .content-box-bot{
       height: 581px;
+    }
+    .content-height-none{
+      height: 657px;
     }
     .content-box{
       padding: 24px 24px 16px;

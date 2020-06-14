@@ -213,6 +213,7 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
   .back-image{
     position: absolute;
     top: 20px;
