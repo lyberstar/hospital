@@ -134,8 +134,6 @@ export default {
     height: 118px;
   }
   .top-box{
-    display: flex;
-    flex-direction: column;
     margin: 0 0 32px 24px;
     padding-top: 32px;
     z-index: 2;
@@ -165,12 +163,9 @@ export default {
     }
   }
   .body-box{
-    display: flex;
-    flex-direction: column;
     background:rgba(255,255,255,1);
     border-radius:8px 8px 0px 0px;
     width: 100%;
-    flex-direction: column;
     box-sizing: border-box;
     z-index: 2;
     position: relative;
@@ -183,8 +178,6 @@ export default {
     .content-box{
       padding: 24px 24px 16px;
       box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
       .need-confirm-box{
         padding: 15px 16px;
         box-sizing: border-box;
@@ -239,8 +232,6 @@ export default {
         }
       }
       .content{
-        display: flex;
-        flex-direction: column;
         .item{
           font-size:14px;
           font-family:PingFangSC-Regular,PingFang SC;
@@ -260,8 +251,6 @@ export default {
           }
         }
         .qabox{
-          display: flex;
-          flex-direction: column;
           padding-top: 16px;
           &:last-child{
             margin-bottom: 95px;
