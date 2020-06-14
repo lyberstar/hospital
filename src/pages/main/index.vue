@@ -136,11 +136,11 @@ export default {
           profession: this.profession
         }
       }).then(function (res) {
-        that.isActive = true
+        that.isActive = false
         if (res.data.status === '200') {
           // 成功了
           localStorage.setItem('USER', JSON.stringify(res.data.data.user))
-          that.$router.go(0)
+          window.location.reload()
         } else {
           if (res.data.status === '201') {
             that.$router.push({ name: 'home', params: { reload: true } })
@@ -149,7 +149,7 @@ export default {
           }
         }
       }).catch(function (err) {
-        that.isActive = true
+        that.isActive = false
         console.log('请求失败', err)
       })
     }

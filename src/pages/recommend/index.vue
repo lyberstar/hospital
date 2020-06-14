@@ -6,10 +6,10 @@
     <!-- 顶部title盒子 -->
     <div class="top-box">
       <div class="top-title">
-        <div class="name-box">李磊的体检计划</div>
-        <div class="tag-box">非职业病高发工种</div>
+        <div class="name-box">{{info.name}}的体检计划</div>
+        <div class="tag-box">{{info.profession === '非职业' ? '非职业病高发工种' : '职业病高发工种'}}</div>
       </div>
-      <div class="top-content">26岁 男 处于备孕期</div>
+      <div class="top-content">{{info.age}}岁 {{info.sex}} {{info.pregnantString === '非备孕' ? '非备孕期/孕期' : '备孕期/孕期'}}</div>
     </div>
     <!-- 主体部分 -->
     <div class="body-box">
@@ -132,6 +132,7 @@ export default {
         that.isActive = false
         if (res.data.status === '200') {
           that.checkList = res.data.data.list
+          console.log('拉取到的推荐套餐为：', that.checkList)
         } else {
           if (res.data.status === '201') {
             that.$router.push({ name: 'home', params: { reload: true } })

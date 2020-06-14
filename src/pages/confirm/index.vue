@@ -400,8 +400,6 @@ export default {
       justify-content: space-between;
       .tab-box{
         width: 164px;
-        display: flex;
-        flex-direction: column;
         align-items: center;
         .tab-content{
           width: 100%;
@@ -426,6 +424,7 @@ export default {
           height:5px;
           background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
           border-radius:2px;
+          margin-left: 64px;
         }
       }
     }
