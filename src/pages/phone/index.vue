@@ -155,14 +155,14 @@ export default {
       margin-top: 40px;
     }
     .input-box{
-      display: flex;
-      align-items: center;
+      // display: flex;
+      // align-items: center;
       border: 0!important;
       font-size:28px;
       font-family:PingFangSC-Regular,PingFang SC;
       font-weight:400;
       color:rgba(18,178,111,1);
-      line-height:40px;
+      line-height:72px;
       letter-spacing:1px;
       height: 72px;
     }

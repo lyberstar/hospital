@@ -21,7 +21,7 @@
           class="input"
           v-model="item.value"
           type="number"
-          oninput="value=value.replace(/[^\d]/g,'')"
+          oninput="if(value.length > 1)value = value.slice(0, 1)"
           @input="onInput(index)"
           @keyup.delete="onDelete(index)"
           maxlength="1" />
