@@ -435,13 +435,12 @@ export default {
     box-sizing: border-box;
     z-index: 2;
     .tab-contain{
-      display: flex;
-      justify-content: space-between;
       height: 31px;
       .tab-box{
-        width: 164px;
+        width: 50%;
         align-items: center;
         height: 31px;
+        float: left;
         .tab-content{
           width: 100%;
           text-align: center;
@@ -465,7 +464,7 @@ export default {
           height:5px;
           background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
           border-radius:2px;
-          margin-left: 64px;
+          margin-left: 78px;
         }
       }
     }

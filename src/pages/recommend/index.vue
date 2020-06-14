@@ -387,9 +387,9 @@ export default {
         font-weight:500;
         color:rgba(18,178,111,1);
         line-height:20px;
-        overflow: hidden;
-        text-overflow:ellipsis;
-        white-space: nowrap;
+        // overflow: hidden;
+        // text-overflow:ellipsis;
+        // white-space: nowrap;
       }
       .box-content{
         margin-top: 2px;
@@ -399,9 +399,9 @@ export default {
         font-weight:400;
         color:rgba(18,178,111,1);
         line-height:17px;
-        overflow: hidden;
-        text-overflow:ellipsis;
-        white-space: nowrap;
+        // overflow: hidden;
+        // text-overflow:ellipsis;
+        // white-space: nowrap;
       }
       .corner-tag{
         position: absolute;
