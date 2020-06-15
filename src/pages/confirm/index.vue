@@ -100,7 +100,7 @@
       </div>
       <button class="confirm-btn" @click="confirm">确认选择</button>
     </div>
-    <div class="bottom-box">
+    <div class="bottom-box" v-if="timeBox && leftTime > 0">
       <div class="time-bottom-left">
         <div class="time-price-box">{{leftContent}}</div>
         <div class="time-price-content">如需调整，请在倒计时结束前戳右方</div>

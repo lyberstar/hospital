@@ -513,8 +513,8 @@ export default {
     }
   }
   .pop-contain{
-    position: absolute;
-    top: 0;
+    position: fixed;
+    bottom: 56px;
     left: 0;
     z-index: 10;
     width: 100%;
@@ -531,7 +531,7 @@ export default {
       border-radius:8px 8px 0px 0px;
       position: absolute;
       bottom: 0;
-      padding: 32px 24px 72px;
+      padding: 32px 24px 16px;
       box-sizing: border-box;
       z-index: 11;
       display: flex;
