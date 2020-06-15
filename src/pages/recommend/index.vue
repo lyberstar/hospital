@@ -1,5 +1,5 @@
 <template>
-  <div class="body-contain" :class="showChangeCheck ? 'overflowhidden' : 'overflowauto'">
+  <div class="body-contain" :class="showChangeCheck ? 'overflowhidden' : ''">
     <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700"/>
     <!-- 顶部背景图 -->
     <img class="back-image" src="../../assets/images/ic-back.png" />
@@ -321,6 +321,7 @@ export default {
     box-sizing: border-box;
     .top-title{
       display: flex;
+      height:33px;
       .name-box{
         height:33px;
         font-size:24px;
@@ -356,12 +357,9 @@ export default {
     }
   }
   .body-box{
-    display: flex;
-    flex: 1;
     background:rgba(255,255,255,1);
     border-radius:8px 8px 0px 0px;
     width: 100%;
-    flex-direction: column;
     padding: 24px 16px 78px;
     box-sizing: border-box;
     z-index: 2;
