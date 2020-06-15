@@ -11,10 +11,10 @@
     <!-- 主体部分 -->
     <div class="body-box">
       <div class="id-title">绑定手机号</div>
-      <input class="input-box" placeholder="请输入手机号" @input="inputChange" v-model="loginPhone" />
+      <input class="input-box" placeholder="请输入手机号" @focus="hideBottom" @blur="showBottom" @input="inputChange" v-model="loginPhone" />
       <div class="border"></div>
       <button class="next-btn" @click="turnToMain">下一步</button>
-      <div class="bottom-icon-box">
+      <div class="bottom-icon-box" v-if="showBottomIcon">
         <img class="bottom-icon" src="../../assets/images/logo-group.png" />
       </div>
     </div>
@@ -32,7 +32,8 @@ export default {
       loginPhone: '',
       idNum: '',
       idcard: '',
-      isActive: false
+      isActive: false,
+      showBottomIcon: true
     }
   },
   components: {
@@ -60,6 +61,12 @@ export default {
   methods: {
     inputChange (e) {
       this.idNum = e.target.value
+    },
+    hideBottom () {
+      this.showBottomIcon = false
+    },
+    showBottom () {
+      this.showBottomIcon = true
     },
     turnToMain () {
       let that = this

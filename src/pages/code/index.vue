@@ -15,11 +15,11 @@
         <div @click="getMobileCode" :class="wait_timer > 0 ? 'getcode-small' : 'getcode-big'">{{ getMobileCodeText() }}</div>
       </div>
       <div class="digit-wrapper">
-        <input class="input-box" @input="inputChange" v-model="loginPhone" maxlength="4" />
+        <input class="input-box" @input="inputChange" @focus="hideBottom" @blur="showBottom" v-model="loginPhone" maxlength="4" />
         <div class="border"></div>
       </div>
       <button class="next-btn" @click="showPop">下一步</button>
-      <div class="bottom-icon-box">
+      <div class="bottom-icon-box" v-if="showBottomIcon">
         <img class="bottom-icon" src="../../assets/images/logo-group.png" />
       </div>
     </div>
@@ -73,7 +73,8 @@ export default {
       pregnant: '',
       profession: '',
       isActive: false,
-      idNum: ''
+      idNum: '',
+      showBottomIcon: true
     }
   },
   components: {
@@ -104,6 +105,12 @@ export default {
     this.getMobileCode()
   },
   methods: {
+    hideBottom () {
+      this.showBottomIcon = false
+    },
+    showBottom () {
+      this.showBottomIcon = true
+    },
     inputChange (e) {
       this.idNum = e.target.value
     },
