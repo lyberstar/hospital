@@ -20,7 +20,7 @@
         <div class="box-content">{{items.intro}}</div>
         <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
       </div>
-      <div class="ios-box" v-if="isIOS"></div>
+      <!-- <div class="ios-box" v-if="isIOS"></div> -->
     </div>
     <!-- 弹窗 -->
     <div class="pop-contain" @touchmove.prevent v-if="showChangeCheck">
@@ -314,11 +314,11 @@ export default {
     z-index: 2;
   }
   .top-box{
-    display: flex;
-    flex-direction: column;
     margin: 0 0 32px 24px;
     padding-top: 32px;
     z-index: 2;
+    height: 89px;
+    box-sizing: border-box;
     .top-title{
       display: flex;
       .name-box{
@@ -356,12 +356,12 @@ export default {
     }
   }
   .body-box{
-    // display: flex;
-    // flex: 1;
+    display: flex;
+    flex: 1;
     background:rgba(255,255,255,1);
     border-radius:8px 8px 0px 0px;
     width: 100%;
-    // flex-direction: column;
+    flex-direction: column;
     padding: 24px 16px 78px;
     box-sizing: border-box;
     z-index: 2;
@@ -434,7 +434,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 11;
+    z-index: 999;
     background:rgba(255,255,255,1);
     border:1px solid rgba(242,242,242,1);
     .bottom-left{

@@ -85,35 +85,38 @@ export default {
     testId () {
       // let that = this
       this.isActive = true
-      if (this.checkIDCard(this.idNum)) {
-        UpIdCard({ id_card: this.idNum }).then(res => {
-          this.isActive = false
-          if (res.data.extend === 400) {
-            this.showPop()
-          } else {
-            localStorage.setItem('JWT_TOKEN', res.data.data.token)
-            this.$router.push({ name: 'phone', params: { idNum: this.idNum } })
-          }
-        })
-        // axios.get('examined/getUserByCard', {
-        //   params: {
-        //     id_card: this.idNum
-        //   }
-        // }).then(function (res) {
-        //   console.log('resssssssssssssssssssss:', res)
-        //   if (res.data.extend === 400) {
-        //     that.showPop()
-        //   } else {
-        //     localStorage.setItem('JWT_TOKEN', res.data.data.token)
-        //     that.$router.push({ name: 'phone', params: { idNum: this.idNum } })
-        //   }
-        // }).catch(function (err) {
-        //   console.log('请求失败', err)
-        // })
-      } else {
+      // if (this.checkIDCard(this.idNum)) {
+      UpIdCard({ id_card: this.idNum }).then(res => {
         this.isActive = false
-        this.$toast('格式不正确')
-      }
+        console.log(res)
+        if (res.data.extend === 400) {
+          this.$toast(res.data.msg)
+        } else if (res.data.extend === 203) {
+          this.showPop()
+        } else {
+          localStorage.setItem('JWT_TOKEN', res.data.data.token)
+          this.$router.push({ name: 'phone', params: { idNum: this.idNum } })
+        }
+      })
+      // axios.get('examined/getUserByCard', {
+      //   params: {
+      //     id_card: this.idNum
+      //   }
+      // }).then(function (res) {
+      //   console.log('resssssssssssssssssssss:', res)
+      //   if (res.data.extend === 400) {
+      //     that.showPop()
+      //   } else {
+      //     localStorage.setItem('JWT_TOKEN', res.data.data.token)
+      //     that.$router.push({ name: 'phone', params: { idNum: this.idNum } })
+      //   }
+      // }).catch(function (err) {
+      //   console.log('请求失败', err)
+      // })
+      // } else {
+      //   this.isActive = false
+      //   this.$toast('格式不正确')
+      // }
     },
     checkIDCard (idcode) {
       // 加权因子
