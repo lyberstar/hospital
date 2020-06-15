@@ -68,7 +68,7 @@
         </div>
         <div class="tip-box">
           <div class="tip-left">{{topPrice}}</div>
-          <div class="tip-right">享9折</div>
+          <div class="tip-right">9折</div>
         </div>
       </div>
       <button class="confirm-btn" @click="confirm">确认选择</button>
@@ -970,7 +970,7 @@ export default {
     border:1px solid rgba(242,242,242,1);
     z-index: 12;
     .left-box{
-      width: 210px;
+      width: 212px;
       .com-price-box{
         display: flex;
         align-items: flex-end;
