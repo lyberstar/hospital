@@ -11,10 +11,10 @@
     <!-- 主体部分 -->
     <div class="body-box">
       <div class="id-title">身份证号</div>
-      <input class="input-box" placeholder="请输入身份证号" @input="inputChange" v-model="loginPhone" />
+      <input class="input-box" placeholder="请输入身份证号" @input="inputChange" @focus="hideBottom" @blur="showBottom" v-model="loginPhone" />
       <div class="border"></div>
       <button class="next-btn" @click="testId">下一步</button>
-      <div class="bottom-icon-box">
+      <div class="bottom-icon-box" v-if="showBottomIcon">
         <img class="bottom-icon" src="../../assets/images/logo-group.png" />
       </div>
     </div>
@@ -49,7 +49,8 @@ export default {
       popShow: false,
       loginPhone: '',
       idNum: '',
-      isActive: false
+      isActive: false,
+      showBottomIcon: true
     }
   },
   components: {
@@ -154,6 +155,12 @@ export default {
     },
     inputChange (e) {
       this.idNum = e.target.value
+    },
+    hideBottom () {
+      this.showBottomIcon = false
+    },
+    showBottom () {
+      this.showBottomIcon = true
     }
   }
 }
@@ -262,7 +269,7 @@ export default {
     }
     .bottom-icon-box{
       width: 100%;
-      position: absolute;
+      position: fixed;
       bottom: 33px;
       display: flex;
       justify-content: center;

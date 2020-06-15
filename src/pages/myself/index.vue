@@ -63,7 +63,7 @@
         <div class="com-price-box">
           <div class="com-rmb">￥</div>
           <p class="com-price">{{finalPrice}}</p>
-          <div class="cut" v-if="cutPrice > 0">(公司补贴已减: ￥{{cutPrice}})</div>
+          <div class="cut" v-if="cutPrice > 0">(补贴已减:￥{{cutPrice}})</div>
           <div class="detail-look" v-if="cutPrice > 0" @click="showPop">查看明细</div>
         </div>
         <div class="tip-box">
@@ -970,7 +970,7 @@ export default {
     border:1px solid rgba(242,242,242,1);
     z-index: 12;
     .left-box{
-      width: 230px;
+      width: 210px;
       .com-price-box{
         display: flex;
         align-items: flex-end;
@@ -1035,6 +1035,7 @@ export default {
       }
     }
     .confirm-btn{
+      width: 110px;
       height:32px;
       background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
       border-radius:16px;
