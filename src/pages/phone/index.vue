@@ -11,7 +11,7 @@
     <!-- 主体部分 -->
     <div class="body-box">
       <div class="id-title">绑定手机号</div>
-      <input class="input-box" placeholder="请输入手机号" @focus="hideBottom" @blur="showBottom" @input="inputChange" v-model="loginPhone" />
+      <input class="input-box" placeholder="请输入手机号" @input="inputChange" v-model="loginPhone" />
       <div class="border"></div>
       <button class="next-btn" @click="turnToMain">下一步</button>
       <div class="bottom-icon-box" v-if="showBottomIcon">
@@ -33,7 +33,8 @@ export default {
       idNum: '',
       idcard: '',
       isActive: false,
-      showBottomIcon: true
+      showBottomIcon: true,
+      docmHeight: 0
     }
   },
   components: {
@@ -55,18 +56,18 @@ export default {
   computed: {
   },
   mounted () {
-    console.log('status:', this.$route.params.idNum)
+    this.docmHeight = document.documentElement.clientHeight
+    window.onresize = () => {
+      return (() => {
+        let showHeight = document.body.clientHeight
+        this.showBottomIcon = !(this.docmHeight > showHeight)
+      })()
+    }
     this.idcard = this.$route.params.idNum
   },
   methods: {
     inputChange (e) {
       this.idNum = e.target.value
-    },
-    hideBottom () {
-      this.showBottomIcon = false
-    },
-    showBottom () {
-      this.showBottomIcon = true
     },
     turnToMain () {
       let that = this
@@ -206,7 +207,7 @@ export default {
     }
     .bottom-icon-box{
       width: 100%;
-      position: absolute;
+      position: fixed;
       bottom: 33px;
       display: flex;
       justify-content: center;

@@ -15,7 +15,7 @@
         <div @click="getMobileCode" :class="wait_timer > 0 ? 'getcode-small' : 'getcode-big'">{{ getMobileCodeText() }}</div>
       </div>
       <div class="digit-wrapper">
-        <input class="input-box" @input="inputChange" @focus="hideBottom" @blur="showBottom" v-model="loginPhone" maxlength="4" />
+        <input class="input-box" @input="inputChange" v-model="loginPhone" maxlength="4" />
         <div class="border"></div>
       </div>
       <button class="next-btn" @click="showPop">下一步</button>
@@ -74,6 +74,7 @@ export default {
       profession: '',
       isActive: false,
       idNum: '',
+      docmHeight: 0,
       showBottomIcon: true
     }
   },
@@ -102,15 +103,16 @@ export default {
     this.idCard = this.$route.params.idCard
     this.phone = this.$route.params.phone
     console.log('this.idCard:', this.$route.params.idCard)
+    this.docmHeight = document.documentElement.clientHeight
+    window.onresize = () => {
+      return (() => {
+        let showHeight = document.body.clientHeight
+        this.showBottomIcon = !(this.docmHeight > showHeight)
+      })()
+    }
     this.getMobileCode()
   },
   methods: {
-    hideBottom () {
-      this.showBottomIcon = false
-    },
-    showBottom () {
-      this.showBottomIcon = true
-    },
     inputChange (e) {
       this.idNum = e.target.value
     },
@@ -378,7 +380,7 @@ export default {
     }
     .bottom-icon-box{
       width: 100%;
-      position: absolute;
+      position: fixed;
       bottom: 33px;
       display: flex;
       justify-content: center;
