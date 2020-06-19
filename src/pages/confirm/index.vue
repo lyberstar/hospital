@@ -36,6 +36,10 @@
             </div>
           </div>
         </div>
+        <div class="empty-box" v-if="selfList.length === 0">
+          <img class="empty-icon" src="../../assets/images/empty.png" />
+          <div class="empty-content">还没有自选项目...</div>
+        </div>
         <div class="compute-box" v-if="selfList.length > 0">
           <div class="compute-item">
             <div class="compute-title">项目总额:</div>
@@ -49,10 +53,29 @@
             <div class="compute-title">超出补贴部分9折:</div>
             <div class="compute-price">-￥{{ninePrice}}</div>
           </div>
+          <div class="total-contain">
+            <div class="total-text">合计：</div>
+            <div class="total-price">￥{{finalPrice}}</div>
+          </div>
         </div>
-        <div class="empty-box" v-if="selfList.length === 0">
-          <img class="empty-icon" src="../../assets/images/empty.png" />
-          <div class="empty-content">还没有自选项目...</div>
+        <div class="pay-contain">
+          <div class="pay-title">支付方式：</div>
+          <div class="pay-box" @click="changePayType(0)">
+            <div class="pay-left">
+              <img src="../../assets/images/ic-paywx.png" class="pay-left-icon" />
+              <div class="pay-left-content">微信支付</div>
+            </div>
+            <img v-if="payType === 0" src="../../assets/images/ic-select.png" class="select-icon" />
+            <img v-if="payType === 1" src="../../assets/images/ic-noselect.png" class="select-icon" />
+          </div>
+          <div class="pay-box" @click="changePayType(1)">
+            <div class="pay-left">
+              <img src="../../assets/images/ic-paycash.png" class="pay-left-icon" />
+              <div class="pay-left-content">到院支付（使用现金、社保卡的请选择该项）</div>
+            </div>
+            <img v-if="payType === 1" src="../../assets/images/ic-select.png" class="select-icon" />
+            <img v-if="payType === 0" src="../../assets/images/ic-noselect.png" class="select-icon" />
+          </div>
         </div>
       </div>
       <div class="list-contain-out" v-if="nowIndex === 1">
@@ -133,7 +156,8 @@ export default {
       leftTime: '',
       showChangeCheck: false,
       isActive: false,
-      info: ''
+      info: '',
+      payType: 1 // 支付方式选择   0 微信   1 现金
     }
   },
   components: {
@@ -174,6 +198,9 @@ export default {
     }
   },
   methods: {
+    changePayType (type) {
+      this.payType = type
+    },
     hideCheck () {
       this.showChangeCheck = false
     },
@@ -535,9 +562,11 @@ export default {
       }
       .compute-box{
         padding: 8px 16px 0px;
-        height: 186px;
+        height: 181px;
         display: flex;
         flex-direction: column;
+        border-bottom: 8px solid #F3F3F3;
+        box-sizing: border-box;
         .compute-item{
           display: flex;
           align-items: center;
@@ -558,6 +587,73 @@ export default {
             font-weight:600;
             color:rgba(42,42,42,1);
             line-height:17px;
+          }
+        }
+        .total-contain{
+          margin-top: 16px;
+          border-top: 1px solid #eeeeee;
+          padding: 16px 0 24px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          .total-text{
+            font-size:12px;
+            font-family:PingFangSC-Regular;
+            font-weight:400;
+            color:rgba(75,75,75,1);
+            line-height:17px;
+          }
+          .total-price{
+            margin-left: 4px;
+            font-size:12px;
+            font-family:PingFangSC-Semibold,PingFang SC;
+            font-weight:600;
+            color:rgba(255,0,0,1);
+            line-height:17px;
+          }
+        }
+      }
+      .pay-contain{
+        padding: 0 16px;
+        height: 232px;
+        box-sizing: border-box;
+        border-bottom: 80px solid #F3F3F3;
+        .pay-title{
+          padding: 24px 0 16px;
+          box-sizing: border-box;
+          font-size:12px;
+          font-family:PingFangSC-Regular,PingFang SC;
+          font-weight:400;
+          color:rgba(42,42,42,1);
+          line-height:17px;
+          border-bottom: 1px solid #eeeeee;
+        }
+        .pay-box{
+          margin-top: 16px;
+          box-sizing: border-box;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          .pay-left{
+            display: flex;
+            align-items: center;
+            .pay-left-icon{
+              width: 19px;
+              height: 19px;
+            }
+            .pay-left-content{
+              margin-left: 9px;
+              height:17px;
+              font-size:12px;
+              font-family:PingFangSC-Regular,PingFang SC;
+              font-weight:400;
+              color:rgba(42,42,42,1);
+              line-height:17px;
+            }
+          }
+          .select-icon{
+            width: 19px;
+            height: 19px;
           }
         }
       }
