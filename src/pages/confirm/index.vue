@@ -40,6 +40,28 @@
           <img class="empty-icon" src="../../assets/images/empty.png" />
           <div class="empty-content">还没有自选项目...</div>
         </div>
+        <div v-if="timeBox" class="order-contain">
+          <div class="order-box">
+            <div class="order-tips">
+              <div class="order-title">订单编号：</div>
+              <div class="order-content">20202020202020</div>
+            </div>
+            <div class="order-tips">
+              <div class="order-title">下单时间：</div>
+              <div class="order-content">2020-06-06 14:00:00</div>
+            </div>
+          </div>
+          <div class="order-box">
+            <div class="order-tips">
+              <div class="order-title">支付方式：</div>
+              <div class="order-content">微信支付</div>
+            </div>
+            <div class="order-tips">
+              <div class="order-title">支付时间：</div>
+              <div class="order-content">2020-06-06 14:00:00</div>
+            </div>
+          </div>
+        </div>
         <div class="compute-box" v-if="selfList.length > 0">
           <div class="compute-item">
             <div class="compute-title">项目总额:</div>
@@ -58,7 +80,7 @@
             <div class="total-price">￥{{finalPrice}}</div>
           </div>
         </div>
-        <div class="pay-contain">
+        <div v-if="!timeBox" class="pay-contain">
           <div class="pay-title">支付方式：</div>
           <div class="pay-box" @click="changePayType(0)">
             <div class="pay-left">
@@ -80,10 +102,52 @@
       </div>
       <div class="list-contain-out" v-if="nowIndex === 1">
         <div class="list-contain-must">
-          <div class="box-contain" v-for="(items, idx) in mustList" :key="idx">
-            <div class="box-name">{{items.name}}</div>
-            <div class="box-content">{{items.intro}}</div>
-            <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
+          <div class="for-box">
+            <div class="box-contain" v-for="(items, idx) in mustList" :key="idx">
+              <div class="box-name">{{items.name}}</div>
+              <div class="box-content">{{items.intro}}</div>
+              <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
+            </div>
+          </div>
+          <div v-if="timeBox" class="order-contain">
+            <div class="order-box">
+              <div class="order-tips">
+                <div class="order-title">订单编号：</div>
+                <div class="order-content">20202020202020</div>
+              </div>
+              <div class="order-tips">
+                <div class="order-title">下单时间：</div>
+                <div class="order-content">2020-06-06 14:00:00</div>
+              </div>
+            </div>
+            <div class="order-box">
+              <div class="order-tips">
+                <div class="order-title">支付方式：</div>
+                <div class="order-content">微信支付</div>
+              </div>
+              <div class="order-tips">
+                <div class="order-title">支付时间：</div>
+                <div class="order-content">2020-06-06 14:00:00</div>
+              </div>
+            </div>
+          </div>
+          <div class="compute-box" v-if="selfList.length > 0">
+            <div class="compute-item">
+              <div class="compute-title">项目总额:</div>
+              <div class="compute-price">￥{{totalPrice}}</div>
+            </div>
+            <div class="compute-item">
+              <div class="compute-title">公司补贴:</div>
+              <div class="compute-price">-￥{{cutPrice}}</div>
+            </div>
+            <div class="compute-item">
+              <div class="compute-title">超出补贴部分9折:</div>
+              <div class="compute-price">-￥{{ninePrice}}</div>
+            </div>
+            <div class="total-contain">
+              <div class="total-text">合计：</div>
+              <div class="total-price">￥{{finalPrice}}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -123,12 +187,16 @@
       </div>
       <button class="confirm-btn" @click="confirm">确认选择</button>
     </div>
-    <div class="bottom-box" v-if="timeBox && leftTime > 0">
+    <!-- <div class="bottom-box" v-if="timeBox && leftTime > 0">
       <div class="time-bottom-left">
         <div class="time-price-box">{{leftContent}}</div>
         <div class="time-price-content">如需调整，请在倒计时结束前戳右方</div>
       </div>
       <button class="confirm-btn" @click="changeCheck">去调整</button>
+    </div> -->
+    <div class="bottom-box" v-if="timeBox">
+      <button class="left-btn" @click="forOthers">为他人选择</button>
+      <button class="right-btn" @click="turnToCancel">我要修改</button>
     </div>
   </div>
 </template>
@@ -198,6 +266,40 @@ export default {
     }
   },
   methods: {
+    forOthers () {
+      let that = this
+      that.isActive = true
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        url: 'examined/loginOut',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {}
+      }).then(function (res) {
+        that.isActive = false
+        if (res.data.msg === '退出登录成功') {
+          localStorage.removeItem('LOGIN_TOKEN')
+          localStorage.removeItem('USER')
+          localStorage.removeItem('JWT_TOKEN')
+          that.$router.push({ name: 'home', params: { reload: true } })
+        } else {
+          if (res.data.status === '201') {
+            localStorage.removeItem('LOGIN_TOKEN')
+            localStorage.removeItem('USER')
+            localStorage.removeItem('JWT_TOKEN')
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
+        }
+      }).catch(function (err) {
+        that.isActive = false
+        console.log('请求失败', err)
+      })
+    },
+    turnToCancel () {
+      this.$router.push({ name: 'cancel', params: { pay: 0 } })
+    },
     changePayType (type) {
       this.payType = type
     },
@@ -393,6 +495,98 @@ export default {
   height: 150px;
   top: 0;
 }
+.compute-box{
+  padding: 8px 16px 0px;
+  height: 261px;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 80px solid #F3F3F3;
+  box-sizing: border-box;
+  .compute-item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    .compute-title{
+      height:17px;
+      font-size:12px;
+      font-family:PingFangSC-Regular,PingFang SC;
+      font-weight:400;
+      color:rgba(42,42,42,1);
+      line-height:17px;
+    }
+    .compute-price{
+      height:17px;
+      font-size:12px;
+      font-family:PingFangSC-Semibold;
+      font-weight:600;
+      color:rgba(42,42,42,1);
+      line-height:17px;
+    }
+  }
+  .total-contain{
+    margin-top: 16px;
+    border-top: 1px solid #eeeeee;
+    padding: 16px 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    .total-text{
+      font-size:12px;
+      font-family:PingFangSC-Regular;
+      font-weight:400;
+      color:rgba(75,75,75,1);
+      line-height:17px;
+    }
+    .total-price{
+      margin-left: 4px;
+      font-size:12px;
+      font-family:PingFangSC-Semibold,PingFang SC;
+      font-weight:600;
+      color:rgba(255,0,0,1);
+      line-height:17px;
+    }
+  }
+}
+.order-contain{
+  padding: 24px 16px;
+  box-sizing: border-box;
+  border-bottom: 8px solid #F2F2F2;
+  .order-box{
+    &:first-child{
+      border-bottom: 1px solid #eeeeee;
+      .order-tips{
+        padding-bottom: 16px;
+      }
+    }
+    &:last-child{
+      .order-tips{
+        padding-top: 16px;
+      }
+    }
+    .order-tips{
+      display: flex;
+      align-items: center;
+      .order-title{
+        height:17px;
+        font-size:12px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(42,42,42,1);
+        line-height:17px;
+      }
+      .order-content{
+        margin-left: 4px;
+        height:17px;
+        font-size:12px;
+        font-family:PingFangSC-Semibold,PingFang SC;
+        font-weight:600;
+        color:rgba(42,42,42,1);
+        line-height:17px;
+      }
+    }
+  }
+}
 .body-contain{
   overflow-x: hidden;
   width: 100%;
@@ -560,59 +754,6 @@ export default {
           }
         }
       }
-      .compute-box{
-        padding: 8px 16px 0px;
-        height: 181px;
-        display: flex;
-        flex-direction: column;
-        border-bottom: 8px solid #F3F3F3;
-        box-sizing: border-box;
-        .compute-item{
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-top: 16px;
-          .compute-title{
-            height:17px;
-            font-size:12px;
-            font-family:PingFangSC-Regular,PingFang SC;
-            font-weight:400;
-            color:rgba(42,42,42,1);
-            line-height:17px;
-          }
-          .compute-price{
-            height:17px;
-            font-size:12px;
-            font-family:PingFangSC-Semibold;
-            font-weight:600;
-            color:rgba(42,42,42,1);
-            line-height:17px;
-          }
-        }
-        .total-contain{
-          margin-top: 16px;
-          border-top: 1px solid #eeeeee;
-          padding: 16px 0 24px;
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          .total-text{
-            font-size:12px;
-            font-family:PingFangSC-Regular;
-            font-weight:400;
-            color:rgba(75,75,75,1);
-            line-height:17px;
-          }
-          .total-price{
-            margin-left: 4px;
-            font-size:12px;
-            font-family:PingFangSC-Semibold,PingFang SC;
-            font-weight:600;
-            color:rgba(255,0,0,1);
-            line-height:17px;
-          }
-        }
-      }
       .pay-contain{
         padding: 0 16px;
         height: 232px;
@@ -678,7 +819,11 @@ export default {
         }
       }
       .list-contain-must{
-        padding: 24px 16px 0;
+        padding: 24px 0 0;
+        .for-box{
+          padding: 0 16px 24px;
+          border-bottom: 8px solid #FAFAFA;
+        }
         .box-contain{
           width: 100%;
           display: flex;
@@ -691,9 +836,6 @@ export default {
           position: relative;
           overflow: hidden;
           margin-bottom: 12px;
-          &:last-child{
-            margin-bottom: 78px!important;
-          }
           .box-name{
             height:20px;
             font-size:14px;
@@ -742,6 +884,34 @@ export default {
     z-index: 11;
     background:rgba(255,255,255,1);
     border:1px solid rgba(242,242,242,1);
+    .left-btn{
+      width:163px;
+      height:32px;
+      background:linear-gradient(270deg,rgba(18,179,112,1) 0%,rgba(48,194,73,1) 100%);
+      border-radius:16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size:15px;
+      font-family:PingFangSC-Regular,PingFang SC;
+      font-weight:400;
+      color:rgba(255,255,255,1);
+      line-height:20px;
+      border: 0!important;
+    }
+    .right-btn{
+      width:163px;
+      height:32px;
+      background:rgba(255,255,255,1);
+      border-radius:16px;
+      border:1px solid rgba(18,178,111,1);
+      font-size:15px;
+      font-family:PingFangSC-Regular,PingFang SC;
+      font-weight:400;
+      color:rgba(18,178,111,1);
+      line-height:20px;
+      border:1px solid rgba(18,178,111,1);
+    }
     .bottom-left{
       display: flex;
       align-items: flex-end;
