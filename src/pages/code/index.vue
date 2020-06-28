@@ -30,16 +30,16 @@
         <div class="pop-title-box">
           <div class="pop-title">{{popTitle}}</div>
           <div class="pop-content" v-if="!fistSelectDone">无论男女，如果您未来3个月有怀孕的打算，或正在孕期我们将为您去掉带有强辐射性等可能会影响胎儿的项目。</div>
-          <div class="pop-content" v-if="fistSelectDone">是否是职业病工种将影响您的检查项目种类。</div>
+          <!-- <div class="pop-content" v-if="fistSelectDone">是否是职业病工种将影响您的检查项目种类。</div> -->
         </div>
         <div class="button-box" v-if="!fistSelectDone">
-          <button class="color-btn" @click="turnToNext(1)">最近三个月有怀孕打算或正在孕期</button>
-          <div class="no-color" @click="turnToNext(0)">不处于孕期，且最近三个月没有怀孕打算</div>
+          <button class="color-btn" @click="turnToMain(1)">最近三个月有怀孕打算或正在孕期</button>
+          <div class="no-color" @click="turnToMain(0)">不处于孕期，且最近三个月没有怀孕打算</div>
         </div>
-        <div class="button-box-next" v-if="fistSelectDone">
+        <!-- <div class="button-box-next" v-if="fistSelectDone">
           <button class="color-btn-next" @click="turnToMain(1)">是职业病工种</button>
           <button class="no-color-next" @click="turnToMain(0)">不是职业病工种</button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -149,14 +149,15 @@ export default {
     hidePop () {
       this.popShow = false
     },
-    turnToNext (idx) {
-      this.pregnant = idx
-      this.fistSelectDone = true
-    },
+    // turnToNext (idx) {
+    //   this.pregnant = idx
+    //   this.fistSelectDone = true
+    // },
     turnToMain (idx) {
       this.isActive = true
       let that = this
-      this.profession = idx
+      this.pregnant = idx
+      // this.profession = idx
       axios({
         method: 'post',
         baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',

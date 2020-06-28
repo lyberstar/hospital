@@ -8,6 +8,7 @@ import Recommend from '@/pages/recommend/index'
 import Success from '@/pages/success/index'
 import Myself from '@/pages/myself/index'
 import Confirm from '@/pages/confirm/index'
+import Cancel from '@/pages/cancel/index'
 import LoginMain from '@/pages/login-main/index'
 Vue.use(Router)
 
@@ -68,6 +69,10 @@ export default new Router({
         keepAlive: true,
         isBack: false
       }
+    }, {
+      name: 'cancel',
+      path: '/cancel',
+      component: Cancel
     }, {
       name: 'login-main',
       path: '/login-main',
