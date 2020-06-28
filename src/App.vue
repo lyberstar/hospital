@@ -12,7 +12,13 @@ export default {
   name: 'app',
   data () {
     return {
-      loadRouter: true
+      loadRouter: true,
+      isRouterAlive: true
+    }
+  },
+  provide () {                                       
+    return {
+        reload: this.reload                                              
     }
   },
   components: {
@@ -24,6 +30,12 @@ export default {
       this.$nextTick(() => {
         this.loadRouter = true
       })
+    },
+    reload () {
+      this.isRouterAlive = false;
+      this.$nextTick(function () {
+        this.isRouterAlive = true;
+      }) 
     }
   },
   watch: {

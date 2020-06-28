@@ -46,7 +46,7 @@
 
 <script>
 import { UpIdCard } from '@ajax'
-// import axios from 'axios'
+import axios from 'axios'
 export default {
   name: 'Home',
   data () {
@@ -149,6 +149,32 @@ export default {
     },
     confirmCancel () {
       // 请求接口，返回项目选择页用replace
+      let that = this
+      this.isActive = true
+      axios({
+        method: 'post',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        url: 'examined/cancelProject',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        data: {}
+      }).then(function (res) {
+        that.isActive = false
+        if (res.data.status === '200') {
+          that.$toast('取消成功，等待退款')
+          setTimeout(() => {
+            that.$router.replace({ name: 'main', params: { reload: true } })
+          }, 1000);
+        } else {
+          if (res.data.status === '201') {
+            that.$router.push({ name: 'home', params: { reload: true } })
+          } else {
+            that.$toast(res.data.msg)
+          }
+        }
+      }).catch(function (err) {
+        that.isActive = false
+        console.log('请求失败', err)
+      })
     }
   }
 }

@@ -18,6 +18,11 @@
             <div class="other-top checkedtop">
               <div class="box-name">{{items.name}}</div>
               <div class="box-content">{{items.intro}}</div>
+              <div class="tag-boxs">
+                <img class="tag-icon1" v-if="items.showTag" src="../../assets/images/ic-book.png" />
+                <img class="tag-icon2" v-if="items.showTagGreen" src="../../assets/images/ic-book.png" />
+                <img class="tag-icon3" v-if="items.showTagRed" src="../../assets/images/ic-book.png" />
+              </div>
               <img class="corner-tag" src="../../assets/images/ic-must-corner.png" />
             </div>
             <div class="other-bottom">
@@ -38,9 +43,13 @@
             <div class="other-top" :class="items.checked ? 'checkedtop' : 'nocheckedtop'">
               <div class="small-title-box">
                 <div class="title" :class="items.checked ? 'checkedtitle' : 'nocheckedtitle'">{{items.name}}</div>
-                <img class="tag-icon" v-if="items.showTag" src="../../assets/images/ic-book.png" />
               </div>
               <div class="subtitle" :class="items.checked ? 'checkedsub' : 'nocheckedsub'">{{items.intro}}</div>
+              <div class="tag-boxs">
+                <img class="tag-icon1" v-if="items.showTag" src="../../assets/images/ic-book.png" />
+                <img class="tag-icon2" v-if="items.showTagGreen" src="../../assets/images/ic-book-green.png" />
+                <img class="tag-icon3" v-if="items.showTagRed" src="../../assets/images/ic-book-red.png" />
+              </div>
               <div class="price-box">
                 <div class="rmb">￥</div>
                 <div class="price">{{items.price}}</div>
@@ -503,7 +512,8 @@ export default {
       totalPrice: 0,
       ninePrice: 0,
       totalCut: 0,
-      topPriceNum: 380 // 最高免减
+      topPriceNum: 380, // 最高免减
+      hcList: []
     }
   },
   components: {
@@ -556,6 +566,7 @@ export default {
         if (res.data.status === '200') {
           that.topPriceNum = res.data.data.subsidies
           that.downData(res.data.data.list)
+          that.hcList = res.data.data.hc
         } else {
           if (res.data.status === '201') {
             that.$router.push({ name: 'home', params: { reload: true } })
@@ -620,6 +631,22 @@ export default {
         this.sideList[this.nowIndex].chooseNum += 1
       } else {
         this.sideList[this.nowIndex].chooseNum -= 1
+      }
+      // 算互斥
+      if (this.sideList[this.nowIndex].list[idx].hc && this.sideList[this.nowIndex].list[idx].hc.length > 0) {
+        for (let i = 0; i < this.sideList[this.nowIndex].list.length; i++) {
+          for (let j = 0; j < this.sideList[this.nowIndex].list[idx].hc.length; j++) {
+            if (this.sideList[this.nowIndex].list[idx].hc[j].toString() === this.sideList[this.nowIndex].list[i].id) {
+              if (this.sideList[this.nowIndex].list[i].checked) {
+                this.$toast(`当前选择${this.sideList[this.nowIndex].list[idx].name}与${this.sideList[this.nowIndex].list[i].name}互斥`)
+                console.log('当前选的name：', this.sideList[this.nowIndex].list[idx].name)
+                console.log('之前选的互斥的name：', this.sideList[this.nowIndex].list[i].name)
+                this.sideList[this.nowIndex].list[i].checked = !this.sideList[this.nowIndex].list[i].checked
+                this.sideList[this.nowIndex].chooseNum -= 1
+              }
+            }
+          }
+        }
       }
       // 算价格
       let totalPrice = 0
@@ -815,6 +842,25 @@ export default {
           text-overflow:ellipsis;
           white-space: nowrap;
         }
+        .tag-boxs{
+          display: flex;
+          margin-top: 8px;
+          .tag-icon1{
+            margin-right: 4px;
+            width: 65px;
+            height: 16px;
+          }
+          .tag-icon2{
+            margin-right: 4px;
+            width: 44px;
+            height: 16px;
+          }
+          .tag-icon3{
+            margin-right: 4px;
+            width: 65px;
+            height: 16px;
+          }
+        }
         .corner-tag{
           position: absolute;
           top: 0;
@@ -865,11 +911,6 @@ export default {
             .nocheckedtitle{
               color:rgba(42,42,42,1);
             }
-            .tag-icon{
-              margin-left: 4px;
-              width: 65px;
-              height: 16px;
-            }
           }
           .subtitle{
             margin-top: 2px;
@@ -879,6 +920,25 @@ export default {
             font-weight:400;
             color:rgba(75,75,75,1);
             line-height:17px;
+          }
+          .tag-boxs{
+            display: flex;
+            margin-top: 4px;
+            .tag-icon1{
+              margin-right: 4px;
+              width: 65px;
+              height: 16px;
+            }
+            .tag-icon2{
+              margin-right: 4px;
+              width: 44px;
+              height: 16px;
+            }
+            .tag-icon3{
+              margin-right: 4px;
+              width: 65px;
+              height: 16px;
+            }
           }
           .checkedsub{
             color:rgba(18,178,111,1);
