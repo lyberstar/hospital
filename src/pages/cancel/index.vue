@@ -9,7 +9,7 @@
       <div class="top-content">{{info.age}}岁 {{info.sex}} {{info.profession === '非职业' ? '非职业病高发工种' : '职业病高发工种'}} {{info.pregnantString === '非备孕' ? '非备孕期/孕期' : '备孕期/孕期'}}</div>
     </div>
     <!-- 主体部分 -->
-    <div class="body-box" @click="turnToMian">
+    <div class="body-box" @click="turnToMian" v-if="!isWXpay">
       <div class="body-item">
         <div class="item-content">
           <div class="content-title">我要修改</div>
@@ -17,7 +17,7 @@
         </div>
         <img class="right-arrow" src="../../assets/images/black_arrow.png" />
       </div>
-      <div class="body-item" @click="showPop">
+      <div class="body-item" @click="showPop" v-if="isWXpay">
         <div class="item-content">
           <div class="content-title">我要取消</div>
           <div class="content-content">取消当前已选体检计划，已交付金额将退回</div>
@@ -57,7 +57,8 @@ export default {
       idNum: '',
       isActive: false,
       docmHeight: 0,
-      showBottomIcon: true
+      showBottomIcon: true,
+      isWXpay: false
     }
   },
   components: {
@@ -77,6 +78,12 @@ export default {
   computed: {
     popTitle () {
       return this.idRight ? '是否处于备孕期？' : '抱歉！该体检项目预约方式为卷烟厂员工专属通道'
+    }
+  },
+  activated () {
+    console.log('this.$route.params.pay:', this.$route.params.pay)
+    if (this.$route.params.pay && this.$route.params.pay === '微信支付') {
+      this.isWXpay = true
     }
   },
   mounted () {

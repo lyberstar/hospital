@@ -58,22 +58,21 @@ export default {
   },
   created () {
     if (this.$route.params.reload) {
-      // return false
-      this.$router.go(0)
+      return false
     }
     if (localStorage.getItem('LOGIN_TOKEN') && localStorage.getItem('USER')) {
       this.$router.replace({ name: 'confirm', params: { checkStatus: true } })
     }
   },
-  // activated () {
-  //   console.log('this.$route.params.reload:', this.$route.params.reload)
-  //   if (this.$route.params.reload) {
-  //     console.log('history1:', history)
-  //     let len = history.length
-  //     history.go(-(len - 2))
-  //     console.log('history2:', history)
-  //   }
-  // },
+  activated () {
+    console.log('this.$route.params.loginOut:', this.$route.params.loginOut)
+    if (this.$route.params.loginOut) {
+      console.log('444')
+      setTimeout(() => {
+        this.$router.go(0)
+      }, 500);
+    }
+  },
   watch: {
   },
   computed: {

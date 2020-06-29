@@ -245,12 +245,24 @@ export default {
     next()
   },
   activated () {
+    if (localStorage.getItem('loginTemp')) {
+      this.selfList = localStorage.getItem('loginTemp').selfList
+      this.mustList = localStorage.getItem('loginTemp').mustList
+      this.totalPrice = localStorage.getItem('loginTemp').totalPrice
+      this.cutPrice = localStorage.getItem('loginTemp').cutPrice
+      this.ninePrice = localStorage.getItem('loginTemp').ninePrice
+      this.finalPrice = localStorage.getItem('loginTemp').finalPrice
+      localStorage.removeItem('loginTemp')
+      return false
+    }
     console.log(!this.$route.meta.isBack)
     console.log(this.isFirstEnter)
     console.log(!this.$route.params.checkStatus)
     if ((!this.$route.meta.isBack || this.isFirstEnter) && !this.$route.params.checkStatus) {
+      console.log('111')
       this.getDataFn() // 这里发起数据请求，（之前是放在created或者mounted中，现在只需要放在这里就好了，不需要再在created或者mounted中请求！！）
     } else {
+      console.log('222')
       this.timeBox = true
       this.getCheckData()
     }
@@ -282,6 +294,15 @@ export default {
         var appid = 'wxe31cb7d48cc075a6'
         this.code = this.getUrlCode().code // 截取code
         if (this.code == null || this.code === '') { // 如果没有code，则去请求
+          let loginTemp = {
+            selfList: this.selfList,
+            mustList: this.mustList,
+            totalPrice: this.totalPrice,
+            cutPrice: this.cutPrice,
+            ninePrice: this.ninePrice,
+            finalPrice: this.finalPrice
+          }
+          localStorage.setItem('loginTemp', loginTemp)
           window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
         } else {
           this.payOrder()
@@ -351,13 +372,13 @@ export default {
           localStorage.removeItem('LOGIN_TOKEN')
           localStorage.removeItem('USER')
           localStorage.removeItem('JWT_TOKEN')
-          that.$router.push({ name: 'home', params: { reload: true } })
+          that.$router.push({ name: 'home', params: { loginOut: true } })
         } else {
           if (res.data.status === '201') {
             localStorage.removeItem('LOGIN_TOKEN')
             localStorage.removeItem('USER')
             localStorage.removeItem('JWT_TOKEN')
-            that.$router.push({ name: 'home', params: { reload: true } })
+            that.$router.push({ name: 'home', params: { loginOut: true } })
           } else {
             that.$toast(res.data.msg)
           }
@@ -368,7 +389,7 @@ export default {
       })
     },
     turnToCancel () {
-      this.$router.push({ name: 'cancel', params: { pay: 0 } })
+      this.$router.push({ name: 'cancel', params: { pay: this.orderData.payStatus } })
     },
     changePayType (type) {
       this.payType = type

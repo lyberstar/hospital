@@ -679,7 +679,8 @@ export default {
         cutPrice: this.cutPrice,
         ninePrice: this.ninePrice,
         finalArry: finalArry,
-        mustList: this.sideList[0].list
+        mustList: this.sideList[0].list,
+        checkStatus: false
       }
       console.log(data)
       this.$router.push({ name: 'confirm', params: { data } })
