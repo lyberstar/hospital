@@ -9,7 +9,7 @@
       <div class="top-content">{{info.age}}岁 {{info.sex}} {{info.profession === '非职业' ? '非职业病高发工种' : '职业病高发工种'}} {{info.pregnantString === '非备孕' ? '非备孕期/孕期' : '备孕期/孕期'}}</div>
     </div>
     <!-- 主体部分 -->
-    <div class="body-box">
+    <div class="body-box" @click="turnToMian">
       <div class="body-item">
         <div class="item-content">
           <div class="content-title">我要修改</div>
@@ -143,6 +143,9 @@ export default {
     },
     hidePop () {
       this.popShow = false
+    },
+    turnToMian () {
+      this.$router.replace({ name: 'main', params: { reload: true } })
     },
     inputChange (e) {
       this.idNum = e.target.value

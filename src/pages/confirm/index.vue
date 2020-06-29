@@ -44,21 +44,21 @@
           <div class="order-box">
             <div class="order-tips">
               <div class="order-title">订单编号：</div>
-              <div class="order-content">20202020202020</div>
+              <div class="order-content">{{orderData.orderNum}}</div>
             </div>
             <div class="order-tips">
               <div class="order-title">下单时间：</div>
-              <div class="order-content">2020-06-06 14:00:00</div>
+              <div class="order-content">{{orderData.orderTime}}</div>
             </div>
           </div>
           <div class="order-box">
             <div class="order-tips">
               <div class="order-title">支付方式：</div>
-              <div class="order-content">微信支付</div>
+              <div class="order-content">{{orderData.payStatus}}</div>
             </div>
             <div class="order-tips">
               <div class="order-title">支付时间：</div>
-              <div class="order-content">2020-06-06 14:00:00</div>
+              <div class="order-content">{{orderData.payTime}}</div>
             </div>
           </div>
         </div>
@@ -113,21 +113,21 @@
             <div class="order-box">
               <div class="order-tips">
                 <div class="order-title">订单编号：</div>
-                <div class="order-content">20202020202020</div>
+                <div class="order-content">{{orderData.orderNum}}</div>
               </div>
               <div class="order-tips">
                 <div class="order-title">下单时间：</div>
-                <div class="order-content">2020-06-06 14:00:00</div>
+                <div class="order-content">{{orderData.orderTime}}</div>
               </div>
             </div>
             <div class="order-box">
               <div class="order-tips">
                 <div class="order-title">支付方式：</div>
-                <div class="order-content">微信支付</div>
+                <div class="order-content">{{orderData.payStatus}}</div>
               </div>
               <div class="order-tips">
                 <div class="order-title">支付时间：</div>
-                <div class="order-content">2020-06-06 14:00:00</div>
+                <div class="order-content">{{orderData.payTime}}</div>
               </div>
             </div>
           </div>
@@ -183,7 +183,7 @@
           <div class="rmb">¥</div>
           <div class="price">{{finalPrice}}</div>
         </div>
-        <div class="price-content">到院自费金额</div>
+        <!-- <div class="price-content">到院自费金额</div> -->
       </div>
       <button class="confirm-btn" @click="getCode">确认选择</button>
     </div>
@@ -228,6 +228,7 @@ export default {
       showChangeCheck: false,
       isActive: false,
       info: '',
+      orderData: '',
       payType: 1 // 支付方式选择   0 微信   1 现金
     }
   },
@@ -248,8 +249,10 @@ export default {
     console.log(this.isFirstEnter)
     console.log(!this.$route.params.checkStatus)
     if ((!this.$route.meta.isBack || this.isFirstEnter) && !this.$route.params.checkStatus) {
-      // this.initData() // 这里许要初始化dada()中的数据
       this.getDataFn() // 这里发起数据请求，（之前是放在created或者mounted中，现在只需要放在这里就好了，不需要再在created或者mounted中请求！！）
+    } else {
+      this.timeBox = true
+      this.getCheckData()
     }
     this.$route.meta.isBack = false // 请求完后进行初始化
     this.isFirstEnter = false// 请求完后进行初始化
@@ -264,21 +267,25 @@ export default {
   },
   mounted () {
     console.log('this.$route.params.checkStatus:', this.$route.params.checkStatus)
-    if (this.$route.params.checkStatus) {
-      this.timeBox = true
-      this.getCheckData()
-    }
+    // if (this.$route.params.checkStatus) {
+    //   this.timeBox = true
+    //   this.getCheckData()
+    // }
   },
   methods: {
     getCode () { // 非静默授权，第一次有弹框
-      this.code = ''
-      var local = window.location.href // 获取页面url
-      var appid = 'wxe31cb7d48cc075a6'
-      this.code = this.getUrlCode().code // 截取code
-      if (this.code == null || this.code === '') { // 如果没有code，则去请求
-        window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-      } else {
-        this.payOrder()
+      if (this.payType === 1) {
+        this.confirm()
+      } else if (this.payType === 0) {
+        this.code = ''
+        var local = window.location.href // 获取页面url
+        var appid = 'wxe31cb7d48cc075a6'
+        this.code = this.getUrlCode().code // 截取code
+        if (this.code == null || this.code === '') { // 如果没有code，则去请求
+          window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
+        } else {
+          this.payOrder()
+        }
       }
     },
     getUrlCode () { // 截取url中的code方法
@@ -431,6 +438,7 @@ export default {
       }).then(function (res) {
         that.isActive = false
         if (res.data.status === '200') {
+          that.orderData = res.data.data.order
           that.totalPrice = res.data.data.total_price
           that.cutPrice = res.data.data.subsidies
           that.ninePrice = res.data.data.beyond_price

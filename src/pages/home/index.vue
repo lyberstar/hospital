@@ -58,10 +58,11 @@ export default {
   },
   created () {
     if (this.$route.params.reload) {
-      return false
+      // return false
+      this.$router.go(0)
     }
     if (localStorage.getItem('LOGIN_TOKEN') && localStorage.getItem('USER')) {
-      this.$router.replace({ name: 'login-main' })
+      this.$router.replace({ name: 'confirm', params: { checkStatus: true } })
     }
   },
   // activated () {
