@@ -246,12 +246,13 @@ export default {
   },
   activated () {
     if (localStorage.getItem('loginTemp')) {
-      this.selfList = localStorage.getItem('loginTemp').selfList
-      this.mustList = localStorage.getItem('loginTemp').mustList
-      this.totalPrice = localStorage.getItem('loginTemp').totalPrice
-      this.cutPrice = localStorage.getItem('loginTemp').cutPrice
-      this.ninePrice = localStorage.getItem('loginTemp').ninePrice
-      this.finalPrice = localStorage.getItem('loginTemp').finalPrice
+      let infotemp = JSON.parse(localStorage.getItem('loginTemp'))
+      this.selfList = infotemp.selfList
+      this.mustList = infotemp.mustList
+      this.totalPrice = infotemp.totalPrice
+      this.cutPrice = infotemp.cutPrice
+      this.ninePrice = infotemp.ninePrice
+      this.finalPrice = infotemp.finalPrice
       localStorage.removeItem('loginTemp')
       return false
     }
@@ -302,7 +303,7 @@ export default {
             ninePrice: this.ninePrice,
             finalPrice: this.finalPrice
           }
-          localStorage.setItem('loginTemp', loginTemp)
+          localStorage.setItem('loginTemp', JSON.stringify(loginTemp))
           window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
         } else {
           this.payOrder()
