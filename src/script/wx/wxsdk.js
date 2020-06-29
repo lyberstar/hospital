@@ -19,7 +19,7 @@ export function wexinPay (data) {
       timestamp: timestamp, // 必填，生成签名的时间戳
       nonceStr: nonceStr, // 必填，生成签名的随机串
       signature: signature, // 必填，签名，见附录1
-      jsApiList: ['checkJsApi', 'chooseWXPay'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+      jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
     })
     wx.ready(function () {
       wx.chooseWXPay({

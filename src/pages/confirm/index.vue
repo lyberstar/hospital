@@ -276,7 +276,7 @@ export default {
       var appid = 'wxe31cb7d48cc075a6'
       this.code = this.getUrlCode().code // 截取code
       if (this.code == null || this.code === '') { // 如果没有code，则去请求
-        window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`
+        window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
       } else {
         this.payOrder()
       }
@@ -307,19 +307,22 @@ export default {
       })
     },
     payOrder () {
+      let code = this.code
+      console.log(code)
       axios({
         method: 'get',
         baseURL: 'http://app.xiantudi.cn/app/',
-        url: 'product/getCode',
-        data: { code: this.code }
+        url: 'product/wxpay',
+        params: { code: code }
       }).then(res => {
         // 调用封装的支付函数
-        let data = res.data.data;
-        console.log(data)
-        wexinPay(data.api).then(res => {
+        let data = res.data.data
+        let api = JSON.parse(data.api)
+        console.log(api)
+        wexinPay(api).then(res => {
           console.log('支付成功')
         }).catch(e => {
-          console.log(e + '支付失败')
+          console.log(e, '支付失败')
         })
       })
     },
