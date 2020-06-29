@@ -66,7 +66,8 @@
 <script>
 import axios from 'axios'
 export default {
-  name: 'Home',
+  name: 'Main',
+  inject:['reload'],
   data () {
     return {
       idRight: true,
@@ -81,6 +82,7 @@ export default {
   components: {
   },
   created () {
+    this.reload()
     console.log('is_adjus:', this.$route.params.is_adjus)
     this.is_adjus = this.$route.params.is_adjus || false
     let info = localStorage.getItem('USER')
@@ -95,6 +97,9 @@ export default {
     }
   },
   mounted () {
+    if (this.$route.params.reload) {
+      this.$router.go(0);
+    }
   },
   methods: {
     showPop () {

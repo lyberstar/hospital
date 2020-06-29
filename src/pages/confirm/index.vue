@@ -260,6 +260,7 @@ export default {
     }
   },
   mounted () {
+    console.log('this.$route.params.checkStatus:', this.$route.params.checkStatus)
     if (this.$route.params.checkStatus) {
       this.timeBox = true
       this.getCheckData()
