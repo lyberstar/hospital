@@ -2,7 +2,7 @@
 const webpack = require('webpack')
 const $path = require('path')
 function resolve(dir) {
-  return $path.join(__dirname, dir)
+  return $path.resolve(__dirname, dir)
 }
 module.exports = {
   publicPath: '',
@@ -25,6 +25,14 @@ module.exports = {
           '^/api': ''
         }
       },
+      '/api': {
+        // target: 'http://xwcds.lyta.gov.cn',//设置你调用的接口域名和端口号 别忘了加http
+        target: 'http://app.xiantudi.cn',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/app': ''
+        }
+      }
     },
     disableHostCheck: true
   },

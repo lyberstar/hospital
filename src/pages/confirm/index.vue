@@ -185,7 +185,7 @@
         </div>
         <div class="price-content">到院自费金额</div>
       </div>
-      <button class="confirm-btn" @click="confirm">确认选择</button>
+      <button class="confirm-btn" @click="getCode">确认选择</button>
     </div>
     <!-- <div class="bottom-box" v-if="timeBox && leftTime > 0">
       <div class="time-bottom-left">
@@ -203,10 +203,13 @@
 
 <script>
 import axios from 'axios'
+import { wexinPay } from '@/script/wx/wxsdk.js'
+
 export default {
   name: 'Home',
   data () {
     return {
+      code: '',
       isFirstEnter: false,
       idRight: true,
       price: 0,
@@ -267,6 +270,62 @@ export default {
     }
   },
   methods: {
+    getCode () { // 非静默授权，第一次有弹框
+      this.code = ''
+      var local = window.location.href // 获取页面url
+      var appid = 'wxe31cb7d48cc075a6'
+      this.code = this.getUrlCode().code // 截取code
+      if (this.code == null || this.code === '') { // 如果没有code，则去请求
+        window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`
+      } else {
+        this.payOrder()
+      }
+    },
+    getUrlCode () { // 截取url中的code方法
+      var url = location.search
+      this.winUrl = url
+      var theRequest = new Object()
+      if (url.indexOf('?') != -1) {
+        var str = url.substr(1)
+        var strs = str.split('&')
+        for (var i = 0; i < strs.length; i++) {
+          theRequest[strs[i].split('=')[0]] = (strs[i].split('=')[1])
+        }
+      }
+      return theRequest
+    },
+    wxPay () {
+      // 根据订单信息从后台获取微信配置参数(和后台商定数据格式,作相应的处理)
+      this.payOrder().then(res => {
+        console.log(res)
+        // 调用封装的支付函数
+        // wexinPay(res.data).then(res => {
+        //   console.log('支付成功')
+        // }).catch(e => {
+        //   console.log('支付失败')
+        // })
+      })
+    },
+    payOrder () {
+      axios({
+        method: 'get',
+        baseURL: 'http://app.xiantudi.cn/app/',
+        url: 'product/getCode',
+        data: { code: this.code }
+      }).then(res => {
+        // 调用封装的支付函数
+        let data = res.data.data;
+        console.log(data)
+        wexinPay(data.api).then(res => {
+          console.log('支付成功')
+        }).catch(e => {
+          console.log(e + '支付失败')
+        })
+      })
+    },
+    authorization (appid) {
+
+    },
     forOthers () {
       let that = this
       that.isActive = true
