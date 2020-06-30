@@ -61,7 +61,11 @@ export default {
       return false
     }
     if (localStorage.getItem('LOGIN_TOKEN') && localStorage.getItem('USER')) {
-      this.$router.replace({ name: 'confirm', params: { checkStatus: true } })
+      if (!localStorage.getItem('hasBook')) {
+        this.$router.replace({ name: 'main', params: { reload: true } })
+      } else {
+        this.$router.replace({ name: 'confirm', params: { checkStatus: true } })
+      }
     }
   },
   activated () {
