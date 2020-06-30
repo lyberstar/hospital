@@ -253,7 +253,9 @@ export default {
       this.cutPrice = infotemp.cutPrice
       this.ninePrice = infotemp.ninePrice
       this.finalPrice = infotemp.finalPrice
+      this.payType = infotemp.payType
       localStorage.removeItem('loginTemp')
+      this.getCode()
       return false
     }
     console.log(!this.$route.meta.isBack)
@@ -294,6 +296,7 @@ export default {
         var local = window.location.href // 获取页面url
         var appid = 'wxe31cb7d48cc075a6'
         this.code = this.getUrlCode().code // 截取code
+        console.log('获取到的code：', this.code)
         if (this.code == null || this.code === '') { // 如果没有code，则去请求
           let loginTemp = {
             selfList: this.selfList,
@@ -301,7 +304,8 @@ export default {
             totalPrice: this.totalPrice,
             cutPrice: this.cutPrice,
             ninePrice: this.ninePrice,
-            finalPrice: this.finalPrice
+            finalPrice: this.finalPrice,
+            payType: this.payType
           }
           localStorage.setItem('loginTemp', JSON.stringify(loginTemp))
           window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
