@@ -255,7 +255,7 @@ export default {
       this.finalPrice = infotemp.finalPrice
       this.payType = infotemp.payType
       localStorage.removeItem('loginTemp')
-      this.getCode()
+      this.wxPay()
       return false
     }
     console.log(!this.$route.meta.isBack)
