@@ -340,7 +340,7 @@ export default {
       console.log(code)
       axios({
         method: 'get',
-        baseURL: 'http://app.xiantudi.cn/app/',
+        baseURL: 'https://sfdisirenmingyiyuan.xiantudi.cn/app/',
         url: 'product/wxpay',
         params: { code: code }
       }).then(res => {
