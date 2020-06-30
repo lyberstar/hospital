@@ -339,7 +339,7 @@ export default {
         method: 'get',
         baseURL: 'http://sfdisirenmingyiyuan.xiantudi.cn/app/',
         url: 'product/wxpay',
-        params: { code: code }
+        params: { code: code, token: localStorage.getItem('LOGIN_TOKEN') }
       }).then(res => {
         // 调用封装的支付函数
         let data = res.data.data
