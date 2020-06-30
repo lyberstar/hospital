@@ -62,7 +62,7 @@
             </div>
           </div>
         </div>
-        <div class="compute-box" v-if="selfList.length > 0">
+        <div class="compute-box compute-small" v-if="selfList.length > 0">
           <div class="compute-item">
             <div class="compute-title">项目总额:</div>
             <div class="compute-price">￥{{totalPrice}}</div>
@@ -337,6 +337,7 @@ export default {
     },
     payOrder () {
       let code = this.code
+      let that = this
       console.log(code)
       axios({
         method: 'get',
@@ -350,13 +351,11 @@ export default {
         console.log(api)
         wexinPay(api).then(res => {
           console.log('支付成功')
+          that.confirm()
         }).catch(e => {
           console.log(e, '支付失败')
         })
       })
-    },
-    authorization (appid) {
-
     },
     forOthers () {
       let that = this
@@ -373,12 +372,14 @@ export default {
           localStorage.removeItem('LOGIN_TOKEN')
           localStorage.removeItem('USER')
           localStorage.removeItem('JWT_TOKEN')
+          localStorage.removeItem('hasBook')
           that.$router.push({ name: 'home', params: { loginOut: true } })
         } else {
           if (res.data.status === '201') {
             localStorage.removeItem('LOGIN_TOKEN')
             localStorage.removeItem('USER')
             localStorage.removeItem('JWT_TOKEN')
+            localStorage.removeItem('hasBook')
             that.$router.push({ name: 'home', params: { loginOut: true } })
           } else {
             that.$toast(res.data.msg)
@@ -554,6 +555,7 @@ export default {
       }).then(function (res) {
         that.isActive = false
         if (res.data.status === '200') {
+          localStorage.setItem('hasBook', true)
           that.$router.push({ name: 'success', params: { prompt: res.data.data.prompt } })
         } else {
           if (res.data.status === '201') {
@@ -587,6 +589,10 @@ export default {
   width: 100%;
   height: 150px;
   top: 0;
+}
+.compute-small{
+  border-bottom: 8px solid #F3F3F3!important;
+  height: 189px!important;
 }
 .compute-box{
   padding: 8px 16px 0px;
@@ -974,7 +980,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 11;
+    z-index: 999;
     background:rgba(255,255,255,1);
     border:1px solid rgba(242,242,242,1);
     .left-btn{
