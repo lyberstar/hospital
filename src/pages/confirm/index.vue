@@ -255,7 +255,7 @@ export default {
       this.finalPrice = infotemp.finalPrice
       this.payType = infotemp.payType
       localStorage.removeItem('loginTemp')
-      this.wxPay()
+      this.getCode()
       return false
     }
     console.log(!this.$route.meta.isBack)
@@ -329,15 +329,7 @@ export default {
     },
     wxPay () {
       // 根据订单信息从后台获取微信配置参数(和后台商定数据格式,作相应的处理)
-      this.payOrder().then(res => {
-        console.log(res)
-        // 调用封装的支付函数
-        // wexinPay(res.data).then(res => {
-        //   console.log('支付成功')
-        // }).catch(e => {
-        //   console.log('支付失败')
-        // })
-      })
+      this.payOrder()
     },
     payOrder () {
       let code = this.code
@@ -345,7 +337,7 @@ export default {
       console.log(code)
       axios({
         method: 'get',
-        baseURL: 'https://sfdisirenmingyiyuan.xiantudi.cn/app/',
+        baseURL: 'http://sfdisirenmingyiyuan.xiantudi.cn/app/',
         url: 'product/wxpay',
         params: { code: code }
       }).then(res => {
