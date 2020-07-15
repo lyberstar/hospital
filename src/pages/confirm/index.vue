@@ -337,8 +337,8 @@ export default {
       console.log(code)
       axios({
         method: 'get',
-        baseURL: 'http://sfdisirenmingyiyuan.xiantudi.cn/app/',
-        url: 'product/wxpay',
+        baseURL: 'https://app.sfsdsrmyy.com/app/',
+        url: 'examined/wxpay',
         params: { code: code, token: localStorage.getItem('LOGIN_TOKEN') }
       }).then(res => {
         // 调用封装的支付函数
@@ -358,7 +358,7 @@ export default {
       that.isActive = true
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/loginOut',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
@@ -409,7 +409,7 @@ export default {
       let that = this
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/getUserInfo',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {
@@ -450,7 +450,7 @@ export default {
       that.isActive = true
       axios({
         method: 'get',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/getUserCategory',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
@@ -539,7 +539,7 @@ export default {
       }
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/entryData',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {

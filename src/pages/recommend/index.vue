@@ -133,7 +133,7 @@ export default {
       let that = this
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/getUserInfo',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {
@@ -165,7 +165,7 @@ export default {
       that.isActive = true
       axios({
         method: 'get',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/getUserCategory',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
@@ -216,7 +216,7 @@ export default {
       let that = this
       axios({
         method: 'get',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/RecommendedPackages',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         params: {
@@ -256,7 +256,7 @@ export default {
       let info = JSON.parse(localStorage.getItem('USER'))
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/SubmitRecommendedPackages',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {

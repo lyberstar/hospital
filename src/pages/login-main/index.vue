@@ -104,7 +104,7 @@ export default {
       that.isActive = true
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/CheckMedicalPlan',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
@@ -136,7 +136,7 @@ export default {
       that.isActive = true
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/loginOut',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {}
@@ -182,7 +182,7 @@ export default {
       let that = this
       axios({
         method: 'post',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/getUserInfo',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         data: {

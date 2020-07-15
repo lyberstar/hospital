@@ -555,7 +555,7 @@ export default {
       this.is_adjus = this.$route.params.is_adjus || false
       axios({
         method: 'get',
-        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'http://139.155.94.28/app/',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/getUserCategory',
         headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
         params: {
