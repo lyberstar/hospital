@@ -549,6 +549,24 @@ export default {
       this.ninePrice = (totalPrice - this.topPriceNum) * 0.1 > 0 ? ((totalPrice - this.topPriceNum) * 0.1).toFixed(1) : 0
       this.totalCut = (parseFloat(this.cutPrice) + parseFloat(this.ninePrice)).toFixed(1)
     },
+    // 检查是用户是否存在已支付过订单
+    checkedIsOrder () {
+      let that = this
+      axios({
+        method: 'get',
+        baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
+        url: 'examined/getUserCategory',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') }
+      }).then(function (res) {
+        if (res.data.status === '200') {
+
+        } else {
+
+        }
+      }).catch(function (err) {
+        console.log('请求失败', err)
+      })
+    },
     getDataList () {
       this.isActive = true
       let that = this

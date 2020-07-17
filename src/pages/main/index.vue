@@ -67,7 +67,7 @@
 import axios from 'axios'
 export default {
   name: 'Main',
-  inject:['reload'],
+  inject: ['reload'],
   data () {
     return {
       idRight: true,
@@ -77,6 +77,12 @@ export default {
       step: 2,
       isActive: false,
       is_adjus: false
+    }
+  },
+  activated () {
+    if (this.$route.params.reload) {
+      window.location.reload()
+      console.log('刷新')
     }
   },
   components: {
@@ -98,7 +104,7 @@ export default {
   },
   mounted () {
     if (this.$route.params.reload) {
-      this.$router.go(0);
+      this.$router.go(0)
     }
   },
   methods: {

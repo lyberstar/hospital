@@ -185,7 +185,7 @@
         </div>
         <!-- <div class="price-content">到院自费金额</div> -->
       </div>
-      <button class="confirm-btn" @click="getCode">确认选择</button>
+      <button class="confirm-btn" @click="payOrder">确认选择</button>
     </div>
     <!-- <div class="bottom-box" v-if="timeBox && leftTime > 0">
       <div class="time-bottom-left">
@@ -210,6 +210,7 @@ export default {
   data () {
     return {
       code: '',
+      uuid: '',
       isFirstEnter: false,
       idRight: true,
       price: 0,
@@ -229,7 +230,7 @@ export default {
       isActive: false,
       info: '',
       orderData: '',
-      payType: 1 // 支付方式选择   0 微信   1 现金
+      payType: 0 // 支付方式选择   0 微信   1 现金
     }
   },
   components: {
@@ -237,6 +238,15 @@ export default {
   created () {
     let info = localStorage.getItem('USER')
     this.info = JSON.parse(info)
+    console.log(123123)
+    this.hasOpenId().then(res => {
+      if (res != true) {
+        this.$toast('微信授权中')
+        this.setUserOid()
+      } else {
+        this.$toast('微信已授权')
+      }
+    })
   },
   beforeRouteEnter (to, from, next) {
     if (from.name === 'success') { // 这个name是下一级页面的路由name
@@ -255,7 +265,6 @@ export default {
       this.finalPrice = infotemp.finalPrice
       this.payType = infotemp.payType
       localStorage.removeItem('loginTemp')
-      this.getCode()
       return false
     }
     console.log(!this.$route.meta.isBack)
@@ -288,15 +297,38 @@ export default {
     // }
   },
   methods: {
+    // 第一次请求判断用户是否已有openid
+    hasOpenId () {
+      let that = this
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'get',
+          baseURL: 'https://app.sfsdsrmyy.com/app/',
+          url: 'examined/wx_check',
+          headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') }
+        }).then(res => {
+          // eslint-disable-next-line eqeqeq
+          if (res.data.status == 200) {
+            if (res.data.data.wx == false) {
+              resolve(that.getCode())
+            } else {
+
+            }
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        })
+      })
+    },
     getCode () { // 非静默授权，第一次有弹框
-      if (this.payType === 1) {
+      if (this.payType === 1) { // paytype==1 到院支付 0 微信支付
         this.confirm()
       } else if (this.payType === 0) {
         this.code = ''
         var local = window.location.href // 获取页面url
         var appid = 'wxe31cb7d48cc075a6'
         this.code = this.getUrlCode().code // 截取code
-        console.log('获取到的code：', this.code)
         if (this.code == null || this.code === '') { // 如果没有code，则去请求
           let loginTemp = {
             selfList: this.selfList,
@@ -309,8 +341,6 @@ export default {
           }
           localStorage.setItem('loginTemp', JSON.stringify(loginTemp))
           window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`
-        } else {
-          this.payOrder()
         }
       }
     },
@@ -331,26 +361,57 @@ export default {
       // 根据订单信息从后台获取微信配置参数(和后台商定数据格式,作相应的处理)
       this.payOrder()
     },
-    payOrder () {
+    // 记录用户openId
+    setUserOid () {
+      let that = this
+      if (!that.code) {
+        this.$toast('缺少微信授权id')
+        return
+      }
+      axios({
+        method: 'get',
+        baseURL: 'https://app.sfsdsrmyy.com/app/',
+        url: 'examined/wx_record',
+        headers: { 'ptoken': localStorage.getItem('LOGIN_TOKEN') },
+        params: { code: that.code }
+      }).then(res => {
+        if (res.data.status == 200) {
+        } else {
+          this.$toast('微信授权失败')
+        }
+      })
+    },
+    async payOrder () {
+      await this.confirm()
+      if (this.payType === 1) {
+        return
+      }
+      if (!this.uuid) {
+        this.$toast('订单生成失败')
+      }
+
       let code = this.code
       let that = this
-      console.log(code)
       axios({
         method: 'get',
         baseURL: 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/wxpay',
-        params: { code: code, token: localStorage.getItem('LOGIN_TOKEN') }
+        params: { uuid: that.uuid, code: code, token: localStorage.getItem('LOGIN_TOKEN'), price: that.finalPrice }
       }).then(res => {
-        // 调用封装的支付函数
-        let data = res.data.data
-        let api = JSON.parse(data.api)
-        console.log(api)
-        wexinPay(api).then(res => {
-          console.log('支付成功')
-          that.confirm()
-        }).catch(e => {
-          console.log(e, '支付失败')
-        })
+        // eslint-disable-next-line eqeqeq
+        if (res.data.status == 200) {
+          // 调用封装的支付函数
+          let data = res.data.data
+          let api = JSON.parse(data.api)
+          wexinPay(api).then(res => {
+            console.log('支付成功')
+            that.confirm()
+          }).catch(e => {
+            console.log(e, '支付失败')
+          })
+        } else {
+          that.$toast(res.data.msg)
+        }
       })
     },
     forOthers () {
@@ -463,6 +524,14 @@ export default {
           that.ninePrice = res.data.data.beyond_price
           that.finalPrice = res.data.data.final_price
           that.leftTime = res.data.data.time_end
+          if (res.data.data.payStatusCode != 1) {
+            that.timeBox = false
+          }
+          if(res.data.data.payStatusCode == 1) {
+            that.timeBox = true
+          }
+          console.log('that.timeBox',that.timeBox)
+
           if (res.data.data.time_end > 0) {
             that.countTime(res.data.data.time_end)
           }
@@ -529,7 +598,7 @@ export default {
     inputChange (e) {
       this.idNum = e.target.value
     },
-    confirm () {
+    async confirm () {
       let that = this
       that.isActive = true
       let info = JSON.parse(localStorage.getItem('USER'))
@@ -537,7 +606,7 @@ export default {
       for (let i = 0; i < this.selfList.length; i++) {
         ids.push(this.selfList[i].id)
       }
-      axios({
+      await axios({
         method: 'post',
         baseURL: process.env.NODE_ENV !== 'production' ? '/app/' : 'https://app.sfsdsrmyy.com/app/',
         url: 'examined/entryData',
@@ -546,16 +615,26 @@ export default {
           pregnant: info.pregnant,
           profession: info.profession === '非职业' ? 0 : 1,
           base_medica: 1,
-          pids: JSON.stringify(ids)
+          pids: JSON.stringify(ids),
+          payment: that.payType
         }
       }).then(function (res) {
         that.isActive = false
         if (res.data.status === '200') {
           localStorage.setItem('hasBook', true)
-          that.$router.push({ name: 'success', params: { prompt: res.data.data.prompt } })
+          if (that.payType === 1) {
+            that.$router.push({ name: 'success', params: { prompt: res.data.data.prompt } })
+          } else {
+            let uuid = res.data.data.prompt.uuid
+            if (uuid) {
+              that.uuid = uuid
+            }
+          }
         } else {
           if (res.data.status === '201') {
-            that.$router.push({ name: 'home', params: { reload: true } })
+            if (that.payType === 1) {
+              that.$router.push({ name: 'home', params: { reload: true } })
+            }
           } else {
             that.$toast(res.data.msg)
           }
@@ -591,6 +670,7 @@ export default {
   height: 189px!important;
 }
 .compute-box{
+  margin-bottom: 50px;
   padding: 8px 16px 0px;
   height: 261px;
   display: flex;

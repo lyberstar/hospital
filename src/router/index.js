@@ -44,7 +44,11 @@ export default new Router({
     }, {
       name: 'main',
       path: '/main',
-      component: Main
+      component: Main,
+      meta: {
+        keepAlive: true,
+        isBack: false
+      }
     }, {
       name: 'recommend',
       path: '/recommend',
