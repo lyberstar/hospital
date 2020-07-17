@@ -524,10 +524,9 @@ export default {
           that.ninePrice = res.data.data.beyond_price
           that.finalPrice = res.data.data.final_price
           that.leftTime = res.data.data.time_end
-          if (res.data.data.payStatusCode != 1) {
+          if (res.data.data.order.payStatusCode !== 1) {
             that.timeBox = false
-          }
-          if(res.data.data.payStatusCode == 1) {
+          } else if (res.data.data.order.payStatusCode === 1) {
             that.timeBox = true
           }
           console.log('that.timeBox',that.timeBox)
